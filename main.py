@@ -43,7 +43,23 @@ async def main():
                 'date': message.date.isoformat(),
                 'from_user': message.from_id.user_id if message.from_id else None,
                 'text': message.text,
-            })
+                'sender': message.sender_id,
+                'chat_id': message.chat_id,
+                'is_reply': bool(message.reply_to_msg_id),
+                'views': message.views,
+                'forwards': message.forwards,
+                'replies': message.replies.replies if message.replies else None,
+                'buttons': message.buttons,
+                'media': message.media.to_dict() if message.media else None,
+                'entities': [entity.to_dict() for entity in message.entities] if message.entities else None,
+                'mentioned': message.mentioned,
+                'post_author': message.post_author,
+                'edit_date': message.edit_date.isoformat() if message.edit_date else None,
+                'via_bot': message.via_bot_id,
+                'reply_to': {
+                    'reply_to_msg_id': message.reply_to.reply_to_msg_id,
+                    'reply_to_peer_id': message.reply_to.reply_to_peer_id,
+                 }if message.reply_to else None })
         
         # Save to JSON file
         with open('telegram_sample.json', 'w', encoding='utf-8') as f:

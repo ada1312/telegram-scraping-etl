@@ -24,8 +24,8 @@ async def all_chats(chat_username, sample_size):
 
 async def main_test():
     results = await all_chats(chat_username, sample_size)
-    print("Keys in results:", results.keys())
-    print("Channel info:", results["channel"].to_dict())
+    #print("Keys in results:", results.keys())
+    #print("Channel info:", results["channel"].to_dict())
     print("Number of messages:", len(results["messages"]))
 
     # Convert messages to DataFrame
