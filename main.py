@@ -1,9 +1,12 @@
 import logging
+import pandas as pd
+from pathlib import Path
 import os
 import json
 import asyncio
 from telethon import TelegramClient
 from dotenv import load_dotenv
+from config import load_config
 
 # Load environment variables
 load_dotenv()
@@ -14,23 +17,27 @@ chat_username = os.getenv("CHAT_USERNAME")
 sample_size = int(os.getenv("SAMPLE_SIZE"))
 logging_level = os.getenv("LOGGING_LEVEL")
 
-# Set up logging
-logging.basicConfig(level=logging_level)
 
 async def main():
+
+    config = load_config()
+
+    # Set up logging
+    logging.basicConfig(level=config.logging_level)
+
     # Create a TelegramClient instance
     client = TelegramClient('session', api_id, api_hash)
     
     try:
         # Start the client
-        await client.start(phone=phone_number)
+        await client.start(phone=config.phone_number)
         
         # Get the chat entity
-        chat = await client.get_entity(chat_username)
+        chat = await client.get_entity(config.chat_username)
         
         # Fetch messages
         messages = []
-        async for message in client.iter_messages(chat, limit=sample_size):
+        async for message in client.iter_messages(chat, limit=config.sample_size):
             messages.append({
                 'id': message.id,
                 'date': message.date.isoformat(),
@@ -53,3 +60,6 @@ async def main():
 
 # Run the main function
 asyncio.run(main())
+
+
+
