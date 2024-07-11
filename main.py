@@ -5,10 +5,8 @@ import os
 import json
 import asyncio
 from telethon import TelegramClient
-from telethon.tl.custom.message import Message
 from dotenv import load_dotenv
 from config import load_config
-from datetime import datetime
 
 # Load environment variables
 load_dotenv()
@@ -20,17 +18,9 @@ sample_size = int(os.getenv("SAMPLE_SIZE"))
 logging_level = os.getenv("LOGGING_LEVEL")
 
 
-class MessageEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, Message):
-            return obj.to_dict()
-        if isinstance(obj, bytes):
-            return obj.decode('utf-8', errors='replace')
-        if isinstance(obj, datetime):
-            return obj.isoformat()
-        return super().default(obj)
 
 async def main():
+
     config = load_config()
 
     # Set up logging
@@ -49,11 +39,32 @@ async def main():
         # Fetch messages
         messages = []
         async for message in client.iter_messages(chat, limit=config.sample_size):
-            messages.append(message)
+            messages.append({
+                'id': message.id,
+                'date': message.date.isoformat(),
+                'from_user': message.from_id.user_id if message.from_id else None,
+                'text': message.text,
+                'sender': message.sender_id,
+                'chat_id': message.chat_id,
+                'is_reply': bool(message.reply_to_msg_id),
+                'views': message.views,
+                'forwards': message.forwards,
+                'replies': message.replies.replies if message.replies else None,
+                'buttons': message.buttons,
+                'media': message.media.to_dict() if message.media else None,
+                'entities': [entity.to_dict() for entity in message.entities] if message.entities else None,
+                'mentioned': message.mentioned,
+                'post_author': message.post_author,
+                'edit_date': message.edit_date.isoformat() if message.edit_date else None,
+                'via_bot': message.via_bot_id,
+                'reply_to': {
+                    'reply_to_msg_id': message.reply_to.reply_to_msg_id,
+                    'reply_to_peer_id': message.reply_to.reply_to_peer_id,
+                 }if message.reply_to else None })
         
         # Save to JSON file
         with open('telegram_sample.json', 'w', encoding='utf-8') as f:
-            json.dump(messages, f, ensure_ascii=False, indent=4, cls=MessageEncoder)
+            json.dump(messages, f, ensure_ascii=False, indent=4)
         
         print(f"Sample of {len(messages)} messages saved to telegram_sample.json")
     
