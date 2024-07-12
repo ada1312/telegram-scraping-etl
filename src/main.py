@@ -1,10 +1,8 @@
 import logging
-import pandas as pd
-from pathlib import Path
 import os
 import json
 import asyncio
-from telethon import TelegramClient, events
+from telethon import TelegramClient
 from telethon.tl.functions.users import GetFullUserRequest
 from telethon.tl.functions.channels import GetFullChannelRequest
 from telethon.tl.types import InputPeerChannel, InputPeerUser
@@ -79,6 +77,7 @@ async def get_user_info(client, user_id):
                 'first_name': user.first_name,
                 'last_name': user.last_name,
                 'username': user.username,
+
             }
     except Exception as e:
         logging.error(f"Error getting user info for {user_id}: {e}")
