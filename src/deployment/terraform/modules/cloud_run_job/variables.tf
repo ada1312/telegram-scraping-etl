@@ -54,37 +54,47 @@ variable "dataset_id" {
   description = "The BigQuery dataset ID."
   type        = string
 }
-variable "table_id_bvol" {
-  description = "The ID of the bvol data"
+variable "chat_config" {
+  description = "The configuration for the chat loading"
   type        = string
 }
 
-variable "table_id_options" {
-  description = "The ID of the binance options table"
+variable "chat_history" {
+  description = "Table for all chat history"
   type        = string
 }
 
-variable "underlying_asset" {
-  description = "The underlying asset"
+variable "chat_info" {
+  description = "Table for all chat info"
   type        = string
 }
 
-variable "underlying_asset_price" {
-  description = "The underlying asset price"
+variable "user_info" {
+  description = "Table for all user info"
   type        = string
 }
 
-variable "url" {
-  description = "The url to get the data from"
-  type        = string  
+variable "api_id_secret" {
+  type = string
+  description = "The full resource name of the API ID secret"
 }
 
-variable "proxy_url" {
-  description = "The proxy url to get the data from"
-  type        = string  
+variable "api_hash_secret" {
+  type = string
+  description = "The full resource name of the API hash secret"
 }
 
-variable "rate_limit_batch_size" {
-  description = "The rate limit batch size for orderbook and ticker data"
+variable "phone_number_secret" {
+  type = string
+  description = "The full resource name of the phone number secret"
+}
+
+variable "chat_username" {
+  description = "Chat username for which to load the chat history"
+  type        = string
+}
+
+variable "sample_size" {
+  description = "Sample size for the chat history, None for all"
   type        = string
 }

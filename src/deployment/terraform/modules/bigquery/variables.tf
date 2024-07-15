@@ -8,14 +8,24 @@ variable "location" {
   type        = string
 }
 
-variable "table_id_options" {
-  description = "The ID of the options table"
+variable "table_chat_config" {
+  description = "The BigQuery table name for chat configuration data."
   type        = string
 }
 
-variable "table_id_bvol" {
-  description = "The ID of the bvol table"
+variable "table_chat_history" {
+  description = "The BigQuery table name for chat history data."
   type        = string
+}
+
+variable "table_chat_info" {
+  description = "The BigQuery table name for chat info data."
+  type        = string
+}
+
+variable "table_user_info" {
+  description = "The BigQuery table name for user info data."
+  type        = string 
 }
 
 variable "labels" {

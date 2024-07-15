@@ -163,3 +163,5 @@ cython_debug/
 
 # Sublime Text, ignore all private files
 session.session
+secrets*
+secrets.tfvars

@@ -1,6 +1,6 @@
 [
     {
-        "name": "chat_id",
+        "name": "id",
         "type": "INTEGER",
         "not_null": true,
         "primary_key": true,

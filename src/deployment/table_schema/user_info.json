@@ -1,6 +1,6 @@
 [
     {
-        "name": "user_id",
+        "name": "id",
         "mode": "REQUIRED",
         "type": "STRING",
         "description": "The unique identifier of the user"
@@ -18,7 +18,7 @@
         "description": "The last name of the user"
     },
     {
-        "name": "user_username",
+        "name": "username",
         "mode": "NULLABLE",
         "type": "STRING",
         "description": "The username of the user"
