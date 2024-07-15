@@ -53,9 +53,9 @@ module "bigquery" {
   chat_info                     = module.bigquery.table_chat_info
   user_info                     = module.bigquery.table_user_info
   logging_level                 = "INFO"
-  api_id_secret          = module.telegram_api_id_secret.secret_id
-  api_hash_secret        = module.telegram_api_hash_secret.secret_id
-  phone_number_secret    = module.telegram_phone_number_secret.secret_id
+  api_id_secret                 = module.secret_manager.secret_id
+  api_hash_secret               = module.secret_manager.secret_id
+  phone_number_secret           = module.secret_manager.secret_id
   chat_username                 = "lobsters_chat"
   sample_size                   = 1000             
 
