@@ -1,0 +1,23 @@
+[
+    {
+      "name": "chat_id",
+      "mode": "REQUIRED",
+      "type": "STRING",
+      "description": "",
+      "fields": []
+    },
+    {
+      "name": "chat_username",
+      "mode": "REQUIRED",
+      "type": "STRING",
+      "description": "",
+      "fields": []
+    },
+    {
+      "name": "dates_to_load",
+      "mode": "REPEATED",
+      "type": "DATE",
+      "description": "",
+      "fields": []
+    }
+  ]

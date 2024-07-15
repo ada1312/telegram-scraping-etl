@@ -44,6 +44,9 @@ async def get_chat_info(client, chat):
             'id': chat.id,
             'title': chat.title,
             'username': chat.username,
+            'description': chat.description,
+            'members_count': chat.participants_count,
+            'linked_chat_id': chat.linked_chat_id,
         }
 
 async def get_user_info(client, user_id):
@@ -77,7 +80,15 @@ async def get_user_info(client, user_id):
                 'first_name': user.first_name,
                 'last_name': user.last_name,
                 'username': user.username,
-
+                'phone': user.phone,
+                'bot': user.bot,
+                'verified': user.verified,
+                'restricted': user.restricted,
+                'scam': user.scam,
+                'fake': user.fake,
+                'access_hash': user.access_hash,
+                'bio': user.about,
+                'bot_info': user.bot_info,
             }
     except Exception as e:
         logging.error(f"Error getting user info for {user_id}: {e}")
