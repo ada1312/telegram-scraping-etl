@@ -2,135 +2,133 @@
     {
         "name": "id",
         "type": "INTEGER",
-        "not_null": true,
-        "primary_key": true,
+        "mode": "REQUIRED",
         "description": "The unique identifier of the chat"
     },
     {
         "name": "date",
-        "type": "TEXT",
-        "not_null": true,
+        "type": "STRING",
+        "mode": "REQUIRED",
         "description": "The date of the message"
     },
     {
         "name": "from_user",
         "type": "INTEGER",
-        "not_null": true,
+        "mode": "REQUIRED",
         "description": "The unique identifier of the user who sent the message"
     },
     {
         "name": "text",
-        "type": "TEXT",
-        "not_null": true,
+        "type": "STRING",
+        "mode": "REQUIRED",
         "description": "The text of the message"
     },
     {
         "name": "sender",
         "type": "INTEGER",
-        "not_null": true,
+        "mode": "REQUIRED",
         "description": "The unique identifier of the sender"
     },
     {
         "name": "chat_id",
         "type": "INTEGER",
-        "not_null": true,
+        "mode": "REQUIRED",
         "description": "The unique identifier of the chat"
     },
     {
         "name": "is_reply",
         "type": "BOOLEAN",
-        "not_null": true,
+        "mode": "REQUIRED",
         "description": "Whether the message is a reply"
     },
     {
         "name": "views",
         "type": "INTEGER",
-        "not_null": true,
+        "mode": "REQUIRED",
         "description": "The number of views"
     },
     {
         "name": "forwards",
         "type": "INTEGER",
-        "not_null": true,
+        "mode": "REQUIRED",
         "description": "The number of forwards"
     },
     {
         "name": "replies",
-        "type": "TEXT",
-        "not_null": true,
+        "type": "STRING",
+        "mode": "REQUIRED",
         "description": "The replies to the message"
     },
     {
         "name": "buttons",
-        "type": "TEXT",
-        "not_null": true,
+        "type": "STRING",
+        "mode": "REQUIRED",
         "description": "The buttons of the message"
     },
     {
         "name": "media",
-        "type": "TEXT",
-        "not_null": true,
+        "type": "STRING",
+        "mode": "REQUIRED",
         "description": "The media of the message"
     },
     {
         "name": "entities",
-        "type": "TEXT",
-        "not_null": true,
+        "type": "STRING",
+        "mode": "REQUIRED",
         "description": "The entities of the message"
     },
     {
         "name": "mentioned",
         "type": "BOOLEAN",
-        "not_null": true,
+        "mode": "REQUIRED",
         "description": "Whether the message is mentioned"
     },
     {
         "name": "post_author",
         "type": "INTEGER",
-        "not_null": true,
+        "mode": "REQUIRED",
         "description": "The unique identifier of the post author"
     },
     {
         "name": "edit_date",
-        "type": "TEXT",
-        "not_null": true,
+        "type": "STRING",
+        "mode": "REQUIRED",
         "description": "The date of the edit"
     },
     {
         "name": "via_bot",
         "type": "INTEGER",
-        "not_null": true,
+        "mode": "REQUIRED",
         "description": "The unique identifier of the via bot"
     },
     {
         "name": "reply_to",
-        "type": "TEXT",
-        "not_null": true,
+        "type": "STRING",
+        "mode": "REQUIRED",
         "description": "The reply to the message"
     },
     {
         "name": "reactions",
-        "type": "TEXT",
-        "not_null": true,
+        "type": "STRING",
+        "mode": "REQUIRED",
         "description": "The reactions to the message"
     },
     {
         "name": "fwd_from",
-        "type": "TEXT",
-        "not_null": true,
+        "type": "STRING",
+        "mode": "REQUIRED",
         "description": "The forward from the message"
     },
     {
         "name": "grouped_id",
         "type": "INTEGER",
-        "not_null": true,
+        "mode": "REQUIRED",
         "description": "The unique identifier of the grouped message"
     },
     {
         "name": "action",
-        "type": "TEXT",
-        "not_null": true,
+        "type": "STRING",
+        "mode": "REQUIRED",
         "description": "The action of the message"
     }
 ]
-

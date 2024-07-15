@@ -1,19 +1,19 @@
-output "chat_config" {
-  description = "The ID of the table created for chat configuration data."
-  value       = google_bigquery_table.chat_config.table_id
+output "table_chat_config_id" {
+  value = google_bigquery_table.chat_config.id
+  description = "The ID of the BigQuery table for chat configuration data."
 }
 
-output "chat_history" {
-  description = "The ID of the table created for chat history data."
-  value       = google_bigquery_table.chat_history.table_id
-} 
-
-output "chat_info" {
-  description = "The ID of the table created for chat info data."
-  value       = google_bigquery_table.chat_info.table_id
+output "table_chat_history_id" {
+  value = google_bigquery_table.chat_history.id
+  description = "The ID of the BigQuery table for chat history data."
 }
 
-output "user_info" {
-  description = "The ID of the table created for user info data."
-  value       = google_bigquery_table.user_info.table_id
+output "table_chat_info_id" {
+  value = google_bigquery_table.chat_info.id
+  description = "The ID of the BigQuery table for chat info data."
+}
+
+output "table_user_info_id" {
+  value = google_bigquery_table.user_info.id
+  description = "The ID of the BigQuery table for user info data."
 }

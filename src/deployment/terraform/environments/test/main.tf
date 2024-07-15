@@ -32,6 +32,8 @@ module "bigquery" {
     env = "test"
   }
   service_account_email = module.service_account.service_account_email
+  schema_path           = "${path.module}/../../modules/bigquery/table_schema"
+
 }
 
 
@@ -73,17 +75,17 @@ output "custom_role_id" {
 }
 
 output "chat_config_table_id" {
-  value = module.bigquery.table_chat_config
+  value = module.bigquery.table_chat_config_id
 }
 
 output "chat_history_table_id" {
-  value = module.bigquery.table_chat_history
+  value = module.bigquery.table_chat_history_id
 }
 
 output "chat_info_table_id" {
-  value = module.bigquery.table_chat_info
+  value = module.bigquery.table_chat_info_id
 }
 
 output "user_info_table_id" {
-  value = module.bigquery.table_user_info
+  value = module.bigquery.table_user_info_id
 }
