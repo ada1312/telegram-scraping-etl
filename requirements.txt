@@ -2,7 +2,4 @@ python-dotenv
 requests
 telethon
 asyncio
-pandas
-scikit-learn
-matplotlib
-nltk
+google-cloud-bigquery
