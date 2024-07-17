@@ -1,3 +1,23 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:3100eab0cc98db46413575bd844699b34f32c50d15344aad10a875cef92eae7d
-size 433
+[
+    {
+      "name": "chat_id",
+      "mode": "REQUIRED",
+      "type": "STRING",
+      "description": "Chat id",
+      "fields": []
+    },
+    {
+      "name": "chat_username",
+      "mode": "REQUIRED",
+      "type": "STRING",
+      "description": "Chat username",
+      "fields": []
+    },
+    {
+      "name": "dates_to_load",
+      "mode": "REPEATED",
+      "type": "DATE",
+      "description": "Dates to load",
+      "fields": []
+    }
+  ]

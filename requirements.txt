@@ -1,3 +1,5 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:dc73b5beccdc2cde809479f18fea3302c8d94438b4abba6630db84066096f11f
-size 61
+python-dotenv
+requests
+telethon
+asyncio
+google-cloud-bigquery

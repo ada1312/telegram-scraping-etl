@@ -1,3 +1,44 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:599a5a1b51f9b7d7982a3cd8ab1f8c249f26f67c02b54a2fa75e28f23208f72f
-size 1001
+variable "account_id" {
+  description = "The service account ID. Must be unique within the project."
+  type        = string
+}
+
+variable "display_name" {
+  description = "The display name for the service account."
+  type        = string
+}
+
+variable "description" {
+  description = "A description of the service account."
+  type        = string
+}
+
+variable "project_id" {
+  description = "The ID of the project in which the service account will be created."
+  type        = string
+}
+
+variable "role_id" {
+  description = "Role ID for the custom role."
+  type        = string
+}
+
+variable "role_title" {
+  description = "Role title for the custom role."
+  type        = string
+}
+
+variable "role_description" {
+  description = "Role description for the custom role."
+  type        = string
+}
+
+variable "role_permissions" {
+  description = "List of permissions for the custom role."
+  type        = list(string)
+  default     = [
+    "bigquery.jobs.create",
+    "run.jobs.run",
+    "run.routes.invoke"
+  ]
+}

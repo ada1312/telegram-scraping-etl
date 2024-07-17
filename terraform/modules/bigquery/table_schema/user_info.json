@@ -1,3 +1,82 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:fa82ebd7c8bb96d24d008c050e6c916f3ee37d9b9c15150acbe24ab0d00f5562
-size 1644
+[
+    {
+        "name": "id",
+        "mode": "REQUIRED",
+        "type": "STRING",
+        "description": "The unique identifier of the user"
+    },
+    {
+        "name": "first_name",
+        "mode": "NULLABLE",
+        "type": "STRING",
+        "description": "The first name of the user"
+    },
+    {
+        "name": "last_name",
+        "mode": "NULLABLE",
+        "type": "STRING",
+        "description": "The last name of the user"
+    },
+    {
+        "name": "username",
+        "mode": "NULLABLE",
+        "type": "STRING",
+        "description": "The username of the user"
+    },
+    {
+        "name": "phone",
+        "mode": "NULLABLE",
+        "type": "STRING",
+        "description": "The phone number of the user"
+    },
+    {
+        "name": "bot",
+        "mode": "NULLABLE",
+        "type": "BOOLEAN",
+        "description": "Whether the user is a bot"
+    },
+    {
+        "name": "verified",
+        "mode": "NULLABLE",
+        "type": "BOOLEAN",
+        "description": "Whether the user is verified"
+    },
+    {
+        "name": "restricted",
+        "mode": "NULLABLE",
+        "type": "BOOLEAN",
+        "description": "Whether the user is restricted"
+    },
+    {
+        "name": "scam",
+        "mode": "NULLABLE",
+        "type": "BOOLEAN",
+        "description": "Whether the user is a scam"
+    },
+    {
+        "name": "fake",
+        "mode": "NULLABLE",
+        "type": "BOOLEAN",
+        "description": "Whether the user is fake"
+    },
+    {
+        "name": "access_hash",
+        "mode": "NULLABLE",
+        "type": "STRING",
+        "description": "The access hash of the user"
+    },
+    {
+        "name": "bio",
+        "mode": "NULLABLE",
+        "type": "STRING",
+        "description": "The bio of the user"
+    },
+    {
+        "name": "bot_info",
+        "mode": "NULLABLE",
+        "type": "STRING",
+        "description": "The bot info of the user"
+    }
+
+]
+

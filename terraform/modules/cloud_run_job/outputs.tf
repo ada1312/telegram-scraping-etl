@@ -1,3 +1,9 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:014c22dfd3690a605ad655e40c56764db70529ae3b53ea723bb0c03d0d6e599e
-size 277
+output "cloud_run_job_name" {
+  description = "The name of the Cloud Run job"
+  value       = google_cloud_run_v2_job.default.name
+}
+
+output "cloud_scheduler_job_name" {
+  description = "The name of the Cloud Scheduler job"
+  value       = google_cloud_scheduler_job.job.name
+}

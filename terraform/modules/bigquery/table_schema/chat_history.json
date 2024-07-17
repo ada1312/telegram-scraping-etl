@@ -1,3 +1,134 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:7cd7cd333289a32e06ef2ecab09b01705727281bff9c277e6eb3feefdb34c03b
-size 3229
+[
+    {
+        "name": "id",
+        "type": "INTEGER",
+        "mode": "REQUIRED",
+        "description": "The unique identifier of the chat"
+    },
+    {
+        "name": "date",
+        "type": "STRING",
+        "mode": "REQUIRED",
+        "description": "The date of the message"
+    },
+    {
+        "name": "from_user",
+        "type": "INTEGER",
+        "mode": "REQUIRED",
+        "description": "The unique identifier of the user who sent the message"
+    },
+    {
+        "name": "text",
+        "type": "STRING",
+        "mode": "REQUIRED",
+        "description": "The text of the message"
+    },
+    {
+        "name": "sender",
+        "type": "INTEGER",
+        "mode": "REQUIRED",
+        "description": "The unique identifier of the sender"
+    },
+    {
+        "name": "chat_id",
+        "type": "INTEGER",
+        "mode": "REQUIRED",
+        "description": "The unique identifier of the chat"
+    },
+    {
+        "name": "is_reply",
+        "type": "BOOLEAN",
+        "mode": "REQUIRED",
+        "description": "Whether the message is a reply"
+    },
+    {
+        "name": "views",
+        "type": "INTEGER",
+        "mode": "REQUIRED",
+        "description": "The number of views"
+    },
+    {
+        "name": "forwards",
+        "type": "INTEGER",
+        "mode": "REQUIRED",
+        "description": "The number of forwards"
+    },
+    {
+        "name": "replies",
+        "type": "STRING",
+        "mode": "REQUIRED",
+        "description": "The replies to the message"
+    },
+    {
+        "name": "buttons",
+        "type": "STRING",
+        "mode": "REQUIRED",
+        "description": "The buttons of the message"
+    },
+    {
+        "name": "media",
+        "type": "STRING",
+        "mode": "REQUIRED",
+        "description": "The media of the message"
+    },
+    {
+        "name": "entities",
+        "type": "STRING",
+        "mode": "REQUIRED",
+        "description": "The entities of the message"
+    },
+    {
+        "name": "mentioned",
+        "type": "BOOLEAN",
+        "mode": "REQUIRED",
+        "description": "Whether the message is mentioned"
+    },
+    {
+        "name": "post_author",
+        "type": "INTEGER",
+        "mode": "REQUIRED",
+        "description": "The unique identifier of the post author"
+    },
+    {
+        "name": "edit_date",
+        "type": "STRING",
+        "mode": "REQUIRED",
+        "description": "The date of the edit"
+    },
+    {
+        "name": "via_bot",
+        "type": "INTEGER",
+        "mode": "REQUIRED",
+        "description": "The unique identifier of the via bot"
+    },
+    {
+        "name": "reply_to",
+        "type": "STRING",
+        "mode": "REQUIRED",
+        "description": "The reply to the message"
+    },
+    {
+        "name": "reactions",
+        "type": "STRING",
+        "mode": "REQUIRED",
+        "description": "The reactions to the message"
+    },
+    {
+        "name": "fwd_from",
+        "type": "STRING",
+        "mode": "REQUIRED",
+        "description": "The forward from the message"
+    },
+    {
+        "name": "grouped_id",
+        "type": "INTEGER",
+        "mode": "REQUIRED",
+        "description": "The unique identifier of the grouped message"
+    },
+    {
+        "name": "action",
+        "type": "STRING",
+        "mode": "REQUIRED",
+        "description": "The action of the message"
+    }
+]

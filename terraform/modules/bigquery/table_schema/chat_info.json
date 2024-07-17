@@ -1,3 +1,39 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:6c2113455725454e0f94cfa82a05a041c3df16ccc6ea79b26b98535066355c1c
-size 791
+[
+    {
+        "name": "id",
+        "type": "string",
+        "required": true,
+        "description": "The unique identifier of the chat"
+    },
+    {
+        "name": "name",
+        "type": "string",
+        "required": true,
+        "description": "The name of the chat"
+    },
+    {
+        "name": "username",
+        "type": "string",
+        "required": true,
+        "description": "The username of the chat"
+    },
+    {
+        "name": "description",
+        "type": "string",
+        "required": false,
+        "description": "The description of the chat"
+    },
+    { 
+        "name": "members_count",
+        "type": "integer",
+        "required": false,
+        "description": "The number of members in the chat"
+    },
+    {
+        "name": "linked_chat_id",
+        "type": "string",
+        "required": false,
+        "description": "The unique identifier of the linked chat"
+    }
+
+]

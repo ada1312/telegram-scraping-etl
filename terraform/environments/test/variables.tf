@@ -1,3 +1,21 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:000d383345ac80a4a446a07eb58aae93a1aefeb388e66fb910bf4dc918eef38c
-size 431
+variable "project_id" {
+  description = "The GCP project ID."
+  type        = string
+}
+variable "telegram_phone_number" {
+  type        = string
+  sensitive   = true
+  description = "Telegram phone number"
+}
+
+variable "telegram_api_id" {
+  type        = string
+  sensitive   = true
+  description = "Telegram API ID"
+}
+
+variable "telegram_api_hash" {
+  type        = string
+  sensitive   = true
+  description = "Telegram API hash"
+}

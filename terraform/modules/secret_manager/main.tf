@@ -1,3 +1,19 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:cf9bcb7f1e4554504b36edbc51c7d425c7775c428d2ee42762760672eb0bf549
-size 536
+resource "google_secret_manager_secret" "secret" {
+  secret_id = var.secret_id
+  project   = var.project_id
+
+  replication {
+    auto {}
+  }
+}
+
+resource "google_secret_manager_secret_version" "secret_version" {
+  secret      = google_secret_manager_secret.secret.id
+  secret_data = var.secret_value
+}
+
+resource "google_secret_manager_secret_iam_member" "secret_access" {
+  secret_id = google_secret_manager_secret.secret.id
+  role      = "roles/secretmanager.secretAccessor"
+  member    = "serviceAccount:${var.service_account_email}"
+}
