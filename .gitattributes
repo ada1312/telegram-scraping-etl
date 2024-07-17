@@ -1,2 +1,0 @@
-terraform/environments/test/.terraform/providers/registry.terraform.io/hashicorp/google/5.38.0/darwin_arm64/terraform-provider-google_v5.38.0_x5 filter=lfs diff=lfs merge=lfs -text
-* filter=lfs diff=lfs merge=lfs -text
