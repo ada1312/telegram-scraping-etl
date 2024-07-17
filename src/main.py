@@ -18,6 +18,7 @@ sample_size = int(os.getenv("SAMPLE_SIZE"))
 logging_level = os.getenv("LOGGING_LEVEL")
 project_id = os.getenv("PROJECT_ID")
 
+# Main function
 async def main():
     # Set up logging
     logging.basicConfig(level=logging_level)
