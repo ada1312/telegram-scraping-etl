@@ -1,13 +1,13 @@
 [
     {
-      "name": "chat_id",
+      "name": "id",
       "mode": "REQUIRED",
       "type": "STRING",
       "description": "Chat id",
       "fields": []
     },
     {
-      "name": "chat_username",
+      "name": "username",
       "mode": "REQUIRED",
       "type": "STRING",
       "description": "Chat username",

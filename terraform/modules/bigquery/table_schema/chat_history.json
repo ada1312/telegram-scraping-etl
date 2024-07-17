@@ -1,134 +1,148 @@
 [
-    {
-        "name": "id",
+  {
+    "name": "id",
+    "type": "INTEGER",
+    "mode": "NULLABLE",
+    "description": "The unique identifier of the chat"
+  },
+  {
+    "name": "date",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "The date of the message"
+  },
+  {
+    "name": "from_user",
+    "type": "INTEGER",
+    "mode": "NULLABLE",
+    "description": "The unique identifier of the user who sent the message"
+  },
+  {
+    "name": "text",
+    "type": "STRING",
+    "mode": "NULLABLE",
+    "description": "The text of the message"
+  },
+  {
+    "name": "sender",
+    "type": "INTEGER",
+    "mode": "NULLABLE",
+    "description": "The unique identifier of the sender"
+  },
+  {
+    "name": "chat_id",
+    "type": "INTEGER",
+    "mode": "NULLABLE",
+    "description": "The unique identifier of the chat"
+  },
+  {
+    "name": "is_reply",
+    "type": "BOOLEAN",
+    "mode": "NULLABLE",
+    "description": "Whether the message is a reply"
+  },
+  {
+    "name": "views",
+    "type": "INTEGER",
+    "mode": "NULLABLE",
+    "description": "The number of views"
+  },
+  {
+    "name": "forwards",
+    "type": "INTEGER",
+    "mode": "NULLABLE",
+    "description": "The number of forwards"
+  },
+  {
+    "name": "replies",
+    "type": "STRING",
+    "mode": "NULLABLE",
+    "description": "The replies to the message"
+  },
+  {
+    "name": "buttons",
+    "type": "STRING",
+    "mode": "NULLABLE",
+    "description": "The buttons of the message"
+  },
+  {
+    "name": "media",
+    "type": "STRING",
+    "mode": "NULLABLE",
+    "description": "The media of the message"
+  },
+  {
+    "name": "entities",
+    "type": "STRING",
+    "mode": "NULLABLE",
+    "description": "The entities of the message"
+  },
+  {
+    "name": "mentioned",
+    "type": "BOOLEAN",
+    "mode": "NULLABLE",
+    "description": "Whether the message is mentioned"
+  },
+  {
+    "name": "post_author",
+    "type": "STRING",
+    "mode": "NULLABLE",
+    "description": "The unique identifier of the post author"
+  },
+  {
+    "name": "edit_date",
+    "type": "TIMESTAMP",
+    "mode": "NULLABLE",
+    "description": "The date of the edit"
+  },
+  {
+    "name": "via_bot",
+    "type": "STRING",
+    "mode": "NULLABLE",
+    "description": "The unique identifier of the via bot"
+  },
+  {
+    "name": "reply_to",
+    "type": "RECORD",
+    "mode": "NULLABLE",
+    "description": "The reply to the message",
+    "fields": [
+      {
+        "name": "reply_to_msg_id",
         "type": "INTEGER",
-        "mode": "REQUIRED",
-        "description": "The unique identifier of the chat"
-    },
-    {
-        "name": "date",
+        "mode": "NULLABLE",
+        "description": "The ID of the message being replied to"
+      },
+      {
+        "name": "reply_to_peer_id",
         "type": "STRING",
-        "mode": "REQUIRED",
-        "description": "The date of the message"
-    },
-    {
-        "name": "from_user",
-        "type": "INTEGER",
-        "mode": "REQUIRED",
-        "description": "The unique identifier of the user who sent the message"
-    },
-    {
-        "name": "text",
-        "type": "STRING",
-        "mode": "REQUIRED",
-        "description": "The text of the message"
-    },
-    {
-        "name": "sender",
-        "type": "INTEGER",
-        "mode": "REQUIRED",
-        "description": "The unique identifier of the sender"
-    },
-    {
-        "name": "chat_id",
-        "type": "INTEGER",
-        "mode": "REQUIRED",
-        "description": "The unique identifier of the chat"
-    },
-    {
-        "name": "is_reply",
-        "type": "BOOLEAN",
-        "mode": "REQUIRED",
-        "description": "Whether the message is a reply"
-    },
-    {
-        "name": "views",
-        "type": "INTEGER",
-        "mode": "REQUIRED",
-        "description": "The number of views"
-    },
-    {
-        "name": "forwards",
-        "type": "INTEGER",
-        "mode": "REQUIRED",
-        "description": "The number of forwards"
-    },
-    {
-        "name": "replies",
-        "type": "STRING",
-        "mode": "REQUIRED",
-        "description": "The replies to the message"
-    },
-    {
-        "name": "buttons",
-        "type": "STRING",
-        "mode": "REQUIRED",
-        "description": "The buttons of the message"
-    },
-    {
-        "name": "media",
-        "type": "STRING",
-        "mode": "REQUIRED",
-        "description": "The media of the message"
-    },
-    {
-        "name": "entities",
-        "type": "STRING",
-        "mode": "REQUIRED",
-        "description": "The entities of the message"
-    },
-    {
-        "name": "mentioned",
-        "type": "BOOLEAN",
-        "mode": "REQUIRED",
-        "description": "Whether the message is mentioned"
-    },
-    {
-        "name": "post_author",
-        "type": "INTEGER",
-        "mode": "REQUIRED",
-        "description": "The unique identifier of the post author"
-    },
-    {
-        "name": "edit_date",
-        "type": "STRING",
-        "mode": "REQUIRED",
-        "description": "The date of the edit"
-    },
-    {
-        "name": "via_bot",
-        "type": "INTEGER",
-        "mode": "REQUIRED",
-        "description": "The unique identifier of the via bot"
-    },
-    {
-        "name": "reply_to",
-        "type": "STRING",
-        "mode": "REQUIRED",
-        "description": "The reply to the message"
-    },
-    {
-        "name": "reactions",
-        "type": "STRING",
-        "mode": "REQUIRED",
-        "description": "The reactions to the message"
-    },
-    {
-        "name": "fwd_from",
-        "type": "STRING",
-        "mode": "REQUIRED",
-        "description": "The forward from the message"
-    },
-    {
-        "name": "grouped_id",
-        "type": "INTEGER",
-        "mode": "REQUIRED",
-        "description": "The unique identifier of the grouped message"
-    },
-    {
-        "name": "action",
-        "type": "STRING",
-        "mode": "REQUIRED",
-        "description": "The action of the message"
-    }
+        "mode": "NULLABLE",
+        "description": "The ID of the peer being replied to"
+      }
+    ]
+  },
+  {
+    "name": "reactions",
+    "type": "STRING",
+    "mode": "NULLABLE",
+    "description": "The reactions to the message"
+  },
+  {
+    "name": "fwd_from",
+    "type": "STRING",
+    "mode": "NULLABLE",
+    "description": "The forward from the message"
+  },
+  {
+    "name": "grouped_id",
+    "type": "STRING",
+    "mode": "NULLABLE",
+    "description": "The unique identifier of the grouped message"
+  },
+  {
+    "name": "action",
+    "type": "STRING",
+    "mode": "NULLABLE",
+    "description": "The action of the message"
+  }
 ]

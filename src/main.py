@@ -1,59 +1,60 @@
-import asyncio
 import logging
-from config import load_config
-from telegram_api.client import create_client, start_client
+import os
+import asyncio
+from telethon import TelegramClient
+from dotenv import load_dotenv
 from telegram_api.chat_info import get_chat_info
-from telegram_api.user_info import get_user_info
-from telegram_api.message_handlers import get_messages
-from writer_bigquery import async_load
+from telegram_api.chat_history import get_chat_info as get_chat_history
+from bigquery_loader import upload_to_bigquery
+from google.cloud import bigquery
 
-#here we are importing the functions from the telegram_api package
+# Load environment variables
+load_dotenv()
+api_id = os.getenv("API_ID")
+api_hash = os.getenv("API_HASH")
+phone_number = os.getenv("PHONE_NUMBER")
+chat_username = os.getenv("CHAT_USERNAME")
+sample_size = int(os.getenv("SAMPLE_SIZE"))
+logging_level = os.getenv("LOGGING_LEVEL")
+project_id = os.getenv("PROJECT_ID")
+
 async def main():
-    config = load_config()
-
     # Set up logging
-    logging.basicConfig(level=config.logging_level)
+    logging.basicConfig(level=logging_level)
 
-    # Create and start the client
-    client = create_client()
+    # Create a TelegramClient instance
+    client = TelegramClient('session', api_id, api_hash)
     
     try:
-        await start_client(client, config.phone_number)
+        # Start the client
+        await client.start(phone=phone_number)
         
         # Get the chat entity
-        chat = await client.get_entity(config.chat_username)
+        chat = await client.get_entity(chat_username)
         
         # Get chat info
         chat_info = await get_chat_info(client, chat)
+        if not chat_info:
+            logging.error(f"Chat info not found for {chat_username}")
+            return
         
-        # Fetch messages and user info
-        messages = await get_messages(client, chat, config.sample_size)
-        users = {}
-        for message in messages:
-            if message['from_user'] and message['from_user'] not in users:
-                user_info = await get_user_info(client, message['from_user'])
-                if user_info:
-                    users[message['from_user']] = user_info
+        # Get chat history
+        messages, users = await get_chat_history(client, chat, sample_size)
+        if not messages or not users:
+            logging.error(f"Chat history not found for {chat_username}")
+            return
+
+        # Prepare data for BigQuery
+        chat_data = [chat_info]
+        user_data = list(users.values())
         
+        # Create BigQuery client
+        bq_client = bigquery.Client(project=project_id)
+
         # Upload data to BigQuery
-        chat_info_success = await async_load([chat_info], config.chat_info_table_id)
-        messages_success = await async_load(messages, config.messages_table_id)
-        users_success = await async_load(list(users.values()), config.users_table_id)
-        
-        if chat_info_success:
-            print(f"Chat info successfully uploaded to BigQuery table {config.chat_info_table_id}")
-        else:
-            print(f"Failed to upload chat info to BigQuery table {config.chat_info_table_id}")
-        
-        if messages_success:
-            print(f"Sample of {len(messages)} messages successfully uploaded to BigQuery table {config.messages_table_id}")
-        else:
-            print(f"Failed to upload messages to BigQuery table {config.messages_table_id}")
-        
-        if users_success:
-            print(f"Information for {len(users)} users successfully uploaded to BigQuery table {config.users_table_id}")
-        else:
-            print(f"Failed to upload user information to BigQuery table {config.users_table_id}")
+        await upload_to_bigquery(bq_client, messages, 'chat_history')
+        await upload_to_bigquery(bq_client, chat_data, 'chat_info')
+        await upload_to_bigquery(bq_client, user_data, 'user_info')
     
     except Exception as e:
         logging.error(f"An error occurred: {e}")
