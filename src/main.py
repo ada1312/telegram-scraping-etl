@@ -7,6 +7,7 @@ from telegram_api.user_info import get_user_info
 from telegram_api.message_handlers import get_messages
 from writer_bigquery import async_load
 
+#here we are importing the functions from the telegram_api package
 async def main():
     config = load_config()
 
