@@ -166,4 +166,6 @@ session.session
 secrets*
 secrets.tfvars**/.terraform/*
 .terraform
-
+.terraform/
+*.tfstate
+*.tfstate.*
