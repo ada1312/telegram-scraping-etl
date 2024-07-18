@@ -15,13 +15,20 @@ api_hash = os.getenv("API_HASH")
 phone_number = os.getenv("PHONE_NUMBER")
 chat_username = os.getenv("CHAT_USERNAME")
 sample_size = int(os.getenv("SAMPLE_SIZE"))
-logging_level = os.getenv("LOGGING_LEVEL")
+logging_level = os.getenv("LOGGING_LEVEL").upper()
 project_id = os.getenv("PROJECT_ID")
+dataset_id = os.getenv("DATASET_ID")
+table_chat_config = os.getenv("TABLE_CHAT_CONFIG")
+table_chat_history = os.getenv("TABLE_CHAT_HISTORY")
+table_chat_info = os.getenv("TABLE_CHAT_INFO")
+table_user_info = os.getenv("TABLE_USER_INFO")
 
 # Main function
 async def main():
     # Set up logging
     logging.basicConfig(level=logging_level)
+    
+    logging.info("Starting Telegram client setup")
 
     # Create a TelegramClient instance
     client = TelegramClient('session', api_id, api_hash)
@@ -29,33 +36,45 @@ async def main():
     try:
         # Start the client
         await client.start(phone=phone_number)
+        logging.info("Telegram client started")
         
         # Get the chat entity
+        logging.info("Fetching chat entity")
         chat = await client.get_entity(chat_username)
         
         # Get chat info
+        logging.info("Fetching chat info")
         chat_info = await get_chat_info(client, chat)
         if not chat_info:
-            logging.error(f"Chat info not found for {chat_username}")
+            logging.error("Chat info not found")
             return
+        logging.info("Chat info fetched")
         
         # Get chat history
+        logging.info("Fetching chat history")
         messages, users = await get_chat_history(client, chat, sample_size)
         if not messages or not users:
-            logging.error(f"Chat history not found for {chat_username}")
+            logging.error("Chat history not found")
             return
+        logging.info("Chat history fetched")
 
         # Prepare data for BigQuery
         chat_data = [chat_info]
         user_data = list(users.values())
         
         # Create BigQuery client
+        logging.info("Creating BigQuery client")
         bq_client = bigquery.Client(project=project_id)
 
         # Upload data to BigQuery
-        await upload_to_bigquery(bq_client, messages, 'chat_history')
-        await upload_to_bigquery(bq_client, chat_data, 'chat_info')
-        await upload_to_bigquery(bq_client, user_data, 'user_info')
+        logging.info("Uploading chat history to BigQuery")
+        await upload_to_bigquery(bq_client, messages, 'chat_history',dataset_id, table_chat_config, table_chat_history, table_chat_info, table_user_info)
+        
+        logging.info("Uploading chat info to BigQuery")
+        await upload_to_bigquery(bq_client, chat_data, 'chat_info',dataset_id, table_chat_config, table_chat_history, table_chat_info, table_user_info)
+        
+        logging.info("Uploading user info to BigQuery")
+        await upload_to_bigquery(bq_client, user_data, 'user_info',dataset_id, table_chat_config, table_chat_history, table_chat_info, table_user_info)
     
     except Exception as e:
         logging.error(f"An error occurred: {e}")
@@ -63,6 +82,7 @@ async def main():
     finally:
         # Disconnect the client
         await client.disconnect()
+        logging.info("Telegram client disconnected")
 
 # Run the main function
 asyncio.run(main())

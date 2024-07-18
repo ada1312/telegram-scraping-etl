@@ -1,6 +1,4 @@
 import logging
-import os
-from dotenv import load_dotenv
 from telegram_api.user_info import get_user_info
 
 async def get_chat_info(client, chat, sample_size):
@@ -21,19 +19,19 @@ async def get_chat_info(client, chat, sample_size):
                 'replies': str(message.replies.replies if message.replies else None),
                 'buttons': str(message.buttons),
                 'media': str(message.media) if message.media else None,
-                'entities': None,  # You may need to adjust this based on your actual data
+                'entities': None, 
                 'mentioned': message.mentioned,
-                'post_author': None,  # You may need to adjust this based on your actual data
+                'post_author': None,
                 'edit_date': message.edit_date.strftime('%Y-%m-%dT%H:%M:%S+00:00') if message.edit_date else None,
                 'via_bot': message.via_bot_id,
                 'reply_to': {
                     'reply_to_msg_id': message.reply_to.reply_to_msg_id,
                     'reply_to_peer_id': str(message.reply_to.reply_to_peer_id),
                 } if message.reply_to else None,
-                'reactions': None,  # You may need to adjust this based on your actual data
-                'fwd_from': None,  # You may need to adjust this based on your actual data
-                'grouped_id': None,  # You may need to adjust this based on your actual data
-                'action': None,  # You may need to adjust this based on your actual data
+                'reactions': None,  
+                'fwd_from': None, 
+                'grouped_id': None,
+                'action': None, 
             }
             messages.append(message_data)
             

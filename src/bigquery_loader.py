@@ -1,23 +1,11 @@
 import logging
-import os
-from google.cloud import bigquery
 from google.cloud.bigquery import LoadJobConfig, SourceFormat 
 from google.api_core.exceptions import BadRequest, GoogleAPIError
 import json
 from io import StringIO
-from dotenv import load_dotenv
 
-# Load environment variables
-load_dotenv()
 
-PROJECT_ID = os.getenv("PROJECT_ID")
-DATASET_ID = os.getenv("DATASET_ID")
-TABLE_CHAT_CONFIG = os.getenv("TABLE_CHAT_CONFIG")
-TABLE_CHAT_HISTORY = os.getenv("TABLE_CHAT_HISTORY")
-TABLE_CHAT_INFO = os.getenv("TABLE_CHAT_INFO")
-TABLE_USER_INFO = os.getenv("TABLE_USER_INFO")
-
-async def upload_to_bigquery(client, data, table_type):
+async def upload_to_bigquery(client, data, table_type, dataset_id, table_chat_config, table_chat_history, table_chat_info, table_user_info):
     try:
         validate_data(data)
     except ValueError as e:
@@ -25,10 +13,10 @@ async def upload_to_bigquery(client, data, table_type):
         return
     
     table_id_mapping = {
-        'chat_config': TABLE_CHAT_CONFIG,
-        'chat_history': TABLE_CHAT_HISTORY,
-        'chat_info': TABLE_CHAT_INFO,
-        'user_info': TABLE_USER_INFO
+        'chat_config': table_chat_config,
+        'chat_history': table_chat_history,
+        'chat_info': table_chat_info,
+        'user_info': table_user_info,
     }
 
     table_id = table_id_mapping.get(table_type)
@@ -40,7 +28,7 @@ async def upload_to_bigquery(client, data, table_type):
 
     logging.info(f"Uploading data to BigQuery table: {table_id}")
     try:
-        table_ref = client.dataset(DATASET_ID).table(table_id)
+        table_ref = client.dataset(dataset_id).table(table_id)
         job_config = LoadJobConfig()
         job_config.source_format = SourceFormat.NEWLINE_DELIMITED_JSON
         job_config.autodetect = True
