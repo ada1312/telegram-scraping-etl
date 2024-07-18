@@ -1,7 +1,7 @@
 import logging
 from telegram_api.user_info import get_user_info
 
-async def get_chat_info(client, chat, sample_size):
+async def get_chat_history(client, chat, sample_size):
     try:
         messages = []
         users = {}
