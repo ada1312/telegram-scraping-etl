@@ -1,4 +1,3 @@
-``` Markdown
 # Telegram Chat History ETL
 
 This project is an ETL (Extract, Transform, Load) pipeline for Telegram chat history. It extracts messages from specified Telegram chats, processes them, and loads them into Google BigQuery tables.
@@ -114,4 +113,3 @@ id:INTEGER,first_name:STRING,last_name:STRING,username:STRING,phone:INTEGER,bot:
 
 ## Deployment
 This script is designed to be deployed on Google Cloud Run. Set the environment variables in your Cloud Run configuration.
-
