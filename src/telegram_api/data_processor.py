@@ -1,9 +1,8 @@
 import logging
-import datetime
+from datetime import datetime, timedelta
 from telegram_api.chat_info import get_chat_info
 from telegram_api.chat_history import get_chat_history
 from bigquery_loader import upload_to_bigquery
-from telegram_api.chat_config import update_processed_date
 
 class DataProcessor:
     def __init__(self, client, bq_client, dataset_id, table_chat_config, table_chat_history, table_chat_info, table_user_info):
@@ -23,54 +22,44 @@ class DataProcessor:
         await self._get_existing_users()
         await self._get_existing_chats()
 
-    async def _get_existing_users(self):
+    def _get_existing_users(self):
         query = f"SELECT id FROM `{self.dataset_id}.{self.table_user_info}`"
         query_job = self.bq_client.query(query)
-        results = query_job.result()
+        results = query_job.result()  # This is blocking, but it's okay for this operation
         self.existing_users = {str(row['id']) for row in results}
 
-    async def _get_existing_chats(self):
+    def _get_existing_chats(self):
         query = f"SELECT id FROM `{self.dataset_id}.{self.table_chat_info}`"
         query_job = self.bq_client.query(query)
-        results = query_job.result()
+        results = query_job.result()  # This is blocking, but it's okay for this operation
         self.existing_chats = {str(row['id']) for row in results}
-
-    async def process_chat(self, chat_config):
-        chat = await self.client.get_entity(chat_config['username'])
+   
+    async def process_chat(self, username, date):
+        chat = await self.client.get_entity(username)
         chat_id = str(chat.id)
 
         if chat_id not in self.existing_chats and chat_id not in self.new_chats:
-            logging.info(f"Fetching chat info for {chat_config['username']}")
+            logging.info(f"Fetching chat info for {username}")
             chat_info = await get_chat_info(self.client, chat)
             self.new_chats[chat_id] = chat_info
 
-        for date_to_load in chat_config['dates_to_load']:
-            await self._process_chat_history(chat, chat_config, date_to_load)
+        start = date.replace(hour=0, minute=0, second=0, microsecond=0)
+        end = start + timedelta(days=1)
 
-    async def _process_chat_history(self, chat, chat_config, date_to_load):
-        start_date = datetime.datetime.strptime(date_to_load, '%Y-%m-%d')
-        end_date = start_date + datetime.timedelta(days=1)
-
-        logging.info(f"Fetching chat history for {chat_config['username']} on {date_to_load}")
-        messages, users = await get_chat_history(self.client, chat, None, start_date, end_date)
+        logging.info(f"Fetching chat history for {username} on {date.date()}")
+        messages, users = await get_chat_history(self.client, chat, None, start, end)
 
         if messages:
-            # Add new users
             for user_id, user_info in users.items():
                 user_id_str = str(user_id)
                 if user_id_str not in self.existing_users and user_id_str not in self.new_users:
                     self.new_users[user_id_str] = user_info
 
-            # Upload chat history
-            logging.info(f"Uploading chat history to BigQuery for {chat_config['username']} on {date_to_load}")
+            logging.info(f"Uploading chat history to BigQuery for {username} on {date.date()}")
             await upload_to_bigquery(self.bq_client, messages, 'chat_history', self.dataset_id, 
                                      self.table_chat_config, self.table_chat_history, self.table_chat_info, self.table_user_info)
-
-            # Update processed date in chat config
-            logging.info(f"Updating chat config for {chat_config['username']} on {date_to_load}")
-            await update_processed_date(self.bq_client, self.dataset_id, self.table_chat_config, chat_config['id'], date_to_load)
         else:
-            logging.error(f"Chat history not found for {chat_config['username']} on {date_to_load}")
+            logging.error(f"Chat history not found for {username} on {date.date()}")
 
     async def upload_new_data(self):
         if self.new_chats:
