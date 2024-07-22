@@ -42,7 +42,7 @@ class DataProcessor:
         except Exception as e:
             logging.error(f"Error fetching existing chats: {e}", exc_info=True)
 
-    async def process_chat(self, username, date):
+    async def process_chat(self, username, date, sample_size):
         try:
             logging.info(f"Starting to process chat for {username} on {date}")
             chat = await self.client.get_entity(username)
@@ -59,7 +59,7 @@ class DataProcessor:
             end = start + timedelta(days=1)
 
             logging.info(f"Fetching chat history for {username} from {start} to {end}")
-            messages, users = await get_chat_history(self.client, chat, start, end)
+            messages, users = await get_chat_history(self.client, chat, sample_size)
 
             logging.info(f"Fetched {len(messages)} messages and {len(users)} users")
             if messages:
