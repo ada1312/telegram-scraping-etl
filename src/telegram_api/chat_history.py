@@ -1,46 +1,55 @@
 import logging
+from telethon.tl.types import InputPeerUser, InputPeerChannel
 from telegram_api.user_info import get_user_info
 
-async def get_chat_history(client, chat, sample_size):
+async def get_chat_history(client, chat, start_date, end_date):
     try:
         messages = []
         users = {}
-        async for message in client.iter_messages(chat, limit=sample_size):
+        
+        # Convert chat to InputPeer if necessary
+        if isinstance(chat, str):
+            chat = await client.get_input_entity(chat)
+        
+        async for message in client.iter_messages(chat, offset_date=end_date, reverse=True):
+            if message.date < start_date:
+                break
+            
             message_data = {
                 'id': message.id,
                 'date': message.date.timestamp(),
-                'from_user': message.from_id.user_id if hasattr(message.from_id, 'user_id') else None,
+                'from_user': str(message.from_id.user_id) if hasattr(message.from_id, 'user_id') else None,
                 'text': message.text,
-                'sender': message.sender_id,
-                'chat_id': message.chat_id,
+                'sender': str(message.sender_id) if message.sender_id else None,
+                'chat_id': str(message.chat_id),
                 'is_reply': bool(message.reply_to_msg_id),
-                'views': message.views if message.views is not None else 0,  # Change here
-                'forwards': message.forwards if message.forwards is not None else 0,  # Change here
-                'replies': message.replies.replies if message.replies else 0,  # Change here
+                'views': message.views if message.views is not None else 0,
+                'forwards': message.forwards if message.forwards is not None else 0,
+                'replies': message.replies.replies if message.replies else 0,
                 'buttons': str(message.buttons),
                 'media': str(message.media) if message.media else None,
                 'entities': None, 
                 'mentioned': message.mentioned,
                 'post_author': None,
                 'edit_date': message.edit_date.strftime('%Y-%m-%dT%H:%M:%S+00:00') if message.edit_date else None,
-                'via_bot': message.via_bot_id,
+                'via_bot': int(message.via_bot_id) if message.via_bot_id is not None else 0,
                 'reply_to': {
                     'reply_to_msg_id': message.reply_to.reply_to_msg_id,
                     'reply_to_peer_id': str(message.reply_to.reply_to_peer_id),
                 } if message.reply_to else None,
                 'reactions': None,  
                 'fwd_from': None, 
-                'grouped_id': None,
-                'action': None, 
+                'grouped_id': str(message.grouped_id) if message.grouped_id else None,
+                'action': str(message.action) if message.action else None, 
             }
             messages.append(message_data)
             
             if hasattr(message.from_id, 'user_id') and message.from_id.user_id not in users:
                 user_info = await get_user_info(client, message.from_id.user_id)
                 if user_info:
-                    users[message.from_id.user_id] = user_info
+                    users[str(message.from_id.user_id)] = user_info
 
         return messages, users
     except Exception as e:
-        logging.error(f"Error getting chat info for {chat}: {e}")
-        return None, None
+        logging.error(f"Error getting chat history for {chat}: {e}")
+        return [], {}

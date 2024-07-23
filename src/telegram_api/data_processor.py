@@ -26,7 +26,7 @@ class DataProcessor:
         try:
             query = f"SELECT id FROM `{self.dataset_id}.{self.table_user_info}`"
             query_job = self.bq_client.query(query)
-            results = query_job.result()  # This is blocking, but it's okay for initialization
+            results = query_job.result()
             self.existing_users = {str(row['id']) for row in results}
             logging.info(f"Fetched {len(self.existing_users)} existing users")
         except Exception as e:
@@ -36,15 +36,15 @@ class DataProcessor:
         try:
             query = f"SELECT id FROM `{self.dataset_id}.{self.table_chat_info}`"
             query_job = self.bq_client.query(query)
-            results = query_job.result()  # This is blocking, but it's okay for initialization
+            results = query_job.result()
             self.existing_chats = {str(row['id']) for row in results}
             logging.info(f"Fetched {len(self.existing_chats)} existing chats")
         except Exception as e:
             logging.error(f"Error fetching existing chats: {e}", exc_info=True)
 
-    async def process_chat(self, username, date, sample_size):
+    async def process_chat(self, username, start_date, end_date):
         try:
-            logging.info(f"Starting to process chat for {username} on {date}")
+            logging.info(f"Starting to process chat for {username} from {start_date} to {end_date}")
             chat = await self.client.get_entity(username)
             chat_id = str(chat.id)
             logging.info(f"Retrieved chat entity. Chat ID: {chat_id}")
@@ -55,17 +55,14 @@ class DataProcessor:
                 self.new_chats[chat_id] = chat_info
                 logging.info(f"Chat info fetched: {chat_info}")
 
-            start = date.replace(hour=0, minute=0, second=0, microsecond=0)
-            end = start + timedelta(days=1)
-
-            logging.info(f"Fetching chat history for {username} from {start} to {end}")
-            messages, users = await get_chat_history(self.client, chat, sample_size)
+            logging.info(f"Fetching chat history for {username} from {start_date} to {end_date}")
+            messages, users = await get_chat_history(self.client, chat, start_date, end_date)
 
             logging.info(f"Fetched {len(messages)} messages and {len(users)} users")
             if messages:
                 logging.info(f"Sample message: {messages[0]}")
             else:
-                logging.warning(f"No messages found for {username} on {date.date()}")
+                logging.warning(f"No messages found for {username} between {start_date} and {end_date}")
                 return
 
             if users:
@@ -76,12 +73,16 @@ class DataProcessor:
                 if user_id_str not in self.existing_users and user_id_str not in self.new_users:
                     self.new_users[user_id_str] = user_info
 
-            logging.info(f"Uploading {len(messages)} messages to BigQuery for {username} on {date.date()}")
-            await upload_to_bigquery(self.bq_client, messages, 'chat_history', self.dataset_id, 
-                                    self.table_chat_config, self.table_chat_history, self.table_chat_info, self.table_user_info)
+            if messages:
+                logging.info(f"Uploading {len(messages)} messages to BigQuery for {username}")
+                await upload_to_bigquery(self.bq_client, messages, 'chat_history', self.dataset_id, 
+                                        self.table_chat_config, self.table_chat_history, self.table_chat_info, self.table_user_info)
+            else:
+                logging.info(f"No messages to upload for {username}")
 
         except Exception as e:
-            logging.error(f"Error processing chat {username} for date {date}: {e}", exc_info=True)
+            logging.error(f"Error processing chat {username} from {start_date} to {end_date}: {e}", exc_info=True)
+
     
     async def upload_new_data(self):
         try:

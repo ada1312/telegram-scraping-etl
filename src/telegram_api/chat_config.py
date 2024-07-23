@@ -25,7 +25,6 @@ async def upsert_chat_config(bq_client, dataset_id, table_chat_config, chat_id, 
     query_job = bq_client.query(query, job_config=job_config)
     await query_job.result()
 
-
 async def get_chat_configs(bq_client, dataset_id, table_chat_config):
     query = f"""
     SELECT id, username, dates_to_load
@@ -35,13 +34,13 @@ async def get_chat_configs(bq_client, dataset_id, table_chat_config):
     query_job = bq_client.query(query)
     results = query_job.result()
     
-    chat_configs = []
+    chat_configs = {}
     for row in results:
         config = dict(row)
         config['id'] = str(config['id'])
         config['username'] = config['username'] or ''
         config['dates_to_load'] = config['dates_to_load'] or [date.today()]  # Use today's date if empty
-        chat_configs.append(config)
+        chat_configs[config['username']] = config
         
     return chat_configs
 
