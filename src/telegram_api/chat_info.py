@@ -5,19 +5,19 @@ async def get_chat_info(client, chat):
     if isinstance(chat, InputPeerChannel):
         full_chat = await client(GetFullChannelRequest(chat))
         return {
-            'id': str(chat.id),
-            'name': full_chat.chats[0].title,
-            'username': full_chat.chats[0].username,
-            'description': full_chat.full_chat.about,
-            'members_count': int(full_chat.full_chat.participants_count) if full_chat.full_chat.participants_count else None,
-            'linked_chat_id': full_chat.full_chat.linked_chat_id,
+            'id': str(chat.channel_id),
+            'name': full_chat.chats[0].title or '',
+            'username': full_chat.chats[0].username or '',
+            'description': full_chat.full_chat.about or '',
+            'members_count': int(full_chat.full_chat.participants_count) if full_chat.full_chat.participants_count is not None else 0,
+            'linked_chat_id': str(full_chat.full_chat.linked_chat_id) if full_chat.full_chat.linked_chat_id is not None else '',
         }
     else:
         return {
             'id': str(chat.id),
-            'name': chat.title,
-            'username': chat.username,
-            'description': getattr(chat, 'description', None),
-            'members_count': int(getattr(chat, 'participants_count', None)) if getattr(chat, 'participants_count', None) else None,
-            'linked_chat_id': chat.linked_chat_id if hasattr(chat, 'linked_chat_id') else None,
+            'name': chat.title or '',
+            'username': chat.username or '',
+            'description': getattr(chat, 'description', '') or '',
+            'members_count': int(getattr(chat, 'participants_count', 0)) if getattr(chat, 'participants_count', None) is not None else 0,
+            'linked_chat_id': str(chat.linked_chat_id) if hasattr(chat, 'linked_chat_id') and chat.linked_chat_id is not None else '',
         }

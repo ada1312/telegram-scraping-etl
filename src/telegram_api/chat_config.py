@@ -2,7 +2,6 @@ from google.cloud import bigquery
 from datetime import date
 import asyncio
 
-
 async def upsert_chat_config(bq_client, dataset_id, table_chat_config, chat_id, username, dates):
     query = f"""
     MERGE `{dataset_id}.{table_chat_config}` AS target
@@ -17,9 +16,9 @@ async def upsert_chat_config(bq_client, dataset_id, table_chat_config, chat_id, 
 
     job_config = bigquery.QueryJobConfig(
         query_parameters=[
-            bigquery.ScalarQueryParameter("chat_id", "STRING", chat_id),
-            bigquery.ScalarQueryParameter("username", "STRING", username),
-            bigquery.ArrayQueryParameter("dates", "DATE", dates),
+            bigquery.ScalarQueryParameter("chat_id", "STRING", str(chat_id)),
+            bigquery.ScalarQueryParameter("username", "STRING", username or ''),
+            bigquery.ArrayQueryParameter("dates", "DATE", [d if isinstance(d, date) else date.fromisoformat(d) for d in dates]),
         ]
     )
 
@@ -39,13 +38,12 @@ async def get_chat_configs(bq_client, dataset_id, table_chat_config):
     chat_configs = []
     for row in results:
         config = dict(row)
-        # Ensure dates_to_load is a list and not empty
-        if not config['dates_to_load']:
-            config['dates_to_load'] = [date.today()]
+        config['id'] = str(config['id'])
+        config['username'] = config['username'] or ''
+        config['dates_to_load'] = config['dates_to_load'] or [date.today()]  # Use today's date if empty
         chat_configs.append(config)
         
     return chat_configs
-
 
 async def update_processed_date(bq_client, dataset_id, table_chat_config, chat_id, new_dates):
     query = f"""
@@ -57,25 +55,24 @@ async def update_processed_date(bq_client, dataset_id, table_chat_config, chat_i
     WHERE id = @chat_id
     """
     
-    # Convert date objects to strings
     new_dates_str = [d.isoformat() if isinstance(d, date) else d for d in new_dates]
     
     job_config = bigquery.QueryJobConfig(
         query_parameters=[
             bigquery.ArrayQueryParameter("new_dates", "DATE", new_dates_str),
-            bigquery.ScalarQueryParameter("chat_id", "STRING", chat_id),
+            bigquery.ScalarQueryParameter("chat_id", "STRING", str(chat_id)),
         ]
     )
     
     def run_query():
         query_job = bq_client.query(query, job_config=job_config)
-        query_job.result()  # This will wait for the job to complete
+        query_job.result()
         return query_job
 
     return await asyncio.to_thread(run_query)
 
-
 def ensure_chat_config_exists(bq_client, dataset_id, table_chat_config, chat_id, username):
+    today = date.today().isoformat()
     query = f"""
     MERGE `{dataset_id}.{table_chat_config}` AS target
     USING (SELECT @chat_id AS id, @username AS username) AS source
@@ -87,8 +84,9 @@ def ensure_chat_config_exists(bq_client, dataset_id, table_chat_config, chat_id,
     
     job_config = bigquery.QueryJobConfig(
         query_parameters=[
-            bigquery.ScalarQueryParameter("chat_id", "STRING", chat_id),
-            bigquery.ScalarQueryParameter("username", "STRING", username),
+            bigquery.ScalarQueryParameter("chat_id", "STRING", str(chat_id)),
+            bigquery.ScalarQueryParameter("username", "STRING", username or ''),
+            bigquery.ScalarQueryParameter("today", "DATE", today),
         ]
     )
     

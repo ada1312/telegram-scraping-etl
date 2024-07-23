@@ -55,7 +55,7 @@
   },
   {
     "name": "replies",
-    "type": "STRING",
+    "type": "INTEGER",
     "mode": "NULLABLE",
     "description": "The replies to the message"
   },
@@ -97,7 +97,7 @@
   },
   {
     "name": "via_bot",
-    "type": "STRING",
+    "type": "INTEGER",
     "mode": "NULLABLE",
     "description": "The unique identifier of the via bot"
   },

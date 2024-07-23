@@ -14,9 +14,9 @@ async def get_chat_history(client, chat, sample_size):
                 'sender': message.sender_id,
                 'chat_id': message.chat_id,
                 'is_reply': bool(message.reply_to_msg_id),
-                'views': message.views,
-                'forwards': message.forwards,
-                'replies': str(message.replies.replies if message.replies else None),
+                'views': message.views if message.views is not None else 0,  # Change here
+                'forwards': message.forwards if message.forwards is not None else 0,  # Change here
+                'replies': message.replies.replies if message.replies else 0,  # Change here
                 'buttons': str(message.buttons),
                 'media': str(message.media) if message.media else None,
                 'entities': None, 
