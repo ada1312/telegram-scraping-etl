@@ -1,0 +1,33 @@
+# For more information, please refer to https://aka.ms/vscode-docker-python
+FROM python:3.11-slim
+
+ENV LOOGING_LEVEL=INFO
+ENV ACCESS_KEY_DEBANK=
+ENV URL=https://pro-openapi.debank.com/v1
+ENV TOKEN=
+ENV MAX_ACCOUNTS=10
+ENV TOP_ACCOUNT=5
+
+# Set the working directory inside the container
+WORKDIR /src
+
+# Create a virtual environment in the container
+# This environment is isolated from the global Python environment
+RUN python -m venv venv
+
+# Activate the virtual environment
+ENV PATH="/src/venv/bin:$PATH"
+
+# Install system dependencies (if any, remove if not needed)
+RUN apt-get update && apt-get install -y --no-install-recommends && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Copy requirements file and install Python dependencies
+COPY requirements.txt /src/
+RUN pip install --upgrade pip && pip install --no-cache-dir -r requirements.txt
+
+# Copy the contents of the app directory into the container
+COPY ./src /src
+
+# Specify the command to run on container start
+CMD ["python", "main.py"]

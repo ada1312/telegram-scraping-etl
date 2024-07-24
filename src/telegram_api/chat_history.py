@@ -48,7 +48,7 @@ async def get_chat_history(client, chat, start_date, end_date):
                 'media': str(message.media) if message.media else None,
                 'entities': None, 
                 'mentioned': message.mentioned,
-                'post_author': None,
+                'post_author': message.post_author if message.post_author is not None else 0,
                 'edit_date': message.edit_date.strftime('%Y-%m-%dT%H:%M:%S+00:00') if message.edit_date else None,
                 'via_bot': int(message.via_bot_id) if message.via_bot_id is not None else 0,
                 'reply_to': {

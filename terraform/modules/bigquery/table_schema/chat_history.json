@@ -85,7 +85,7 @@
   },
   {
     "name": "post_author",
-    "type": "STRING",
+    "type": "INTEGER",
     "mode": "NULLABLE",
     "description": "The unique identifier of the post author"
   },

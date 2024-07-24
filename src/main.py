@@ -72,9 +72,6 @@ async def main(mode, start_date=None, end_date=None):
             # End date: end of yesterday
             end_date = datetime.combine(yesterday, datetime.max.time()).replace(tzinfo=timezone.utc)
 
-            # Print dates for debugging
-            print(f"Start Date: {start_date}")
-            print(f"End Date: {end_date}")
         elif mode == 'backload':
             if not start_date or not end_date:
                 logging.error("Backload mode requires both start_date and end_date.")

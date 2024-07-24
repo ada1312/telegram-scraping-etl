@@ -169,3 +169,7 @@ secrets.tfvars**/.terraform/*
 .terraform/
 *.tfstate
 *.tfstate.*
+
+#comands
+docker_command.txt
+

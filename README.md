@@ -43,33 +43,31 @@ pip install -r requirements.txt
     TABLE_CHAT_INFO=chat_info
     TABLE_USER_INFO=user_info
     LOGGING_LEVEL=INFO
-    MODE="daily" # 'daily' or 'backload'
+    MODE="day_ago" # 'day_ago' or 'backload'
     BACKLOAD_START_DATE=YYYY-MM-DD
     BACKLOAD_END_DATE=YYYY-MM-DD
-    UPDATE_INTERVAL_HOURS=6
 
 ## Usage
-The script can be run in two modes: daily and backload.
+The script can be run in two modes: day_ago and backload.
 
 ## Daily Mode
-This mode processes data for the last 24 hours, divided into specified intervals.
+This mode processes data for the previous day.
 
     ```bash
-    python main.py
+    python main.py day_ago
 
     ```
 Set the following environment variables:
 
     ```bash
-    MODE=daily
-    UPDATE_INTERVAL_HOURS=6 (or your preferred interval)
+    MODE=day_ago
     ```
 
 ## Backload Mode
 This mode processes historical data for a specified date range.
 
     ```bash
-    python main.py
+    python main.py backload --start_date YYYY-MM-DD --end_date YYYY-MM-DD
 
     ```
 Set the following environment variables:
@@ -89,11 +87,11 @@ bq mk --table your_dataset_id.chat_config \
 id:STRING,username:STRING,dates_to_load:DATE
 ```
 
-
 2. chat_history:
 ```bash
 bq mk --table your_dataset_id.chat_history \
 id:INTEGER,date:FLOAT,from_user:INTEGER,text:STRING,sender:INTEGER,chat_id:INTEGER,is_reply:BOOLEAN,views:INTEGER,forwards:INTEGER,replies:STRING,buttons:STRING,media:STRING,entities:STRING,mentioned:BOOLEAN,post_author:STRING,edit_date:TIMESTAMP,via_bot:STRING,reply_to:RECORD,reactions:STRING,fwd_from:STRING,grouped_id:STRING,action:STRING,reply_to.reply_to_msg_id:INTEGER,reply_to.reply_to_peer_id:STRING
+
 ```
 
 
@@ -101,8 +99,8 @@ id:INTEGER,date:FLOAT,from_user:INTEGER,text:STRING,sender:INTEGER,chat_id:INTEG
 ```bash
 bq mk --table your_dataset_id.chat_info \
 id:INTEGER,name:STRING,username:STRING,description:STRING,members_count:STRING,linked_chat_id:STRING
-```
 
+```
 
 4. user_info
 ```bash
@@ -110,6 +108,31 @@ bq mk --table your_dataset_id.user_info \
 id:INTEGER,first_name:STRING,last_name:STRING,username:STRING,phone:INTEGER,bot:BOOLEAN,verified:BOOLEAN,restricted:BOOLEAN,scam:BOOLEAN,fake:BOOLEAN,access_hash:INTEGER,bio:STRING,bot_info:STRING
 ```
 
+## Project Structure
+
+main.py: Main script that orchestrates the data collection process
+bigquery_loader.py: Handles uploading data to BigQuery
+chat_config.py: Manages chat configuration data in BigQuery
+chat_history.py: Retrieves chat history from Telegram
+chat_info.py: Retrieves chat information from Telegram
+user_info.py: Retrieves user information from Telegram
+data_processor.py: Processes and manages the data flow
+
+## Data Processing
+The DataProcessor class in data_processor.py handles the main logic for processing chat data:
+
+Initializes by fetching existing users and chats from BigQuery
+Processes each chat, retrieving chat info and history
+Manages new users and chats
+Uploads processed data to BigQuery
+
+## User Information
+The get_user_info function in user_info.py retrieves detailed information about Telegram users, including:
+
+User ID, name, username, phone number
+Bot status, verification status
+Restricted, scam, and fake flags
+Access hash, bio, and bot info
 
 ## Deployment
-This script is designed to be deployed on Google Cloud Run. Set the environment variables in your Cloud Run configuration.
+This script is designed to be run as a scheduled job, either on a local machine or in a cloud environment like Google Cloud Run. Set the environment variables in your deployment configuration.

@@ -98,3 +98,18 @@ variable "sample_size" {
   description = "Sample size for the chat history, None for all"
   type        = string
 }
+
+variable "start_date" {
+  description = "Start date for the chat history"
+  type        = string
+}
+
+variable "end_date" {
+  description = "End date for the chat history"
+  type        = string
+}
+
+variable "mode" {
+  description = "Mode for the chat history"
+  type        = string
+}

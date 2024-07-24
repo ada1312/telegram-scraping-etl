@@ -18,13 +18,16 @@ resource "google_cloud_run_v2_job" "default" {
             USER_INFO             = var.user_info
             CHAT_USERNAME         = var.chat_username
             SAMPLE_SIZE           = var.sample_size
+            START_DATE            = var.start_date
+            END_DATE              = var.end_date
+            MODE                  = var.mode
           }
           content {
             name  = env.key
             value = env.value
           }
         }
-
+            
         # Add secret environment variables
         env {
           name = "API_ID"

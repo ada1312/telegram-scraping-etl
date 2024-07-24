@@ -34,10 +34,8 @@ module "bigquery" {
   service_account_email = module.service_account.service_account_email
   schema_path           = "${path.module}/../../modules/bigquery/table_schema"
 
-}
 
-
-/* module "cloud_run" {
+module "cloud_run" {
   source                        = "../../modules/cloud_run_job"
   location                      = "us-central1"
   project_id                    = var.project_id
@@ -57,10 +55,11 @@ module "bigquery" {
   api_hash_secret               = module.secret_manager.secret_id
   phone_number_secret           = module.secret_manager.secret_id
   chat_username                 = "lobsters_chat"
-  sample_size                   = 1000             
-
-
-}  */
+  sample_size                   = 1000           
+  start_date                    = 2024-07-13
+  end_date                      = 2024-07-23
+  mode                          = "backload" # backload or day_ago
+}
 
 output "service_account_email" {
   value = module.service_account.service_account_email
