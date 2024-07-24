@@ -3,6 +3,24 @@ from telethon.tl.types import InputPeerUser, InputPeerChannel
 from telegram_api.user_info import get_user_info
 
 async def get_chat_history(client, chat, start_date, end_date):
+    """
+    Retrieves the chat history from a given chat within a specified date range.
+
+    Args:
+        client: The Telegram client instance.
+        chat: The chat identifier or username.
+        start_date: The start date of the chat history (datetime object).
+        end_date: The end date of the chat history (datetime object).
+
+    Returns:
+        A tuple containing two elements:
+        - A list of dictionaries representing the chat messages within the specified date range.
+        - A dictionary containing user information for the users who sent the chat messages.
+
+    Raises:
+        Exception: If there is an error retrieving the chat history.
+
+    """
     try:
         messages = []
         users = {}
@@ -39,7 +57,7 @@ async def get_chat_history(client, chat, start_date, end_date):
                 } if message.reply_to else None,
                 'reactions': None,  
                 'fwd_from': None, 
-                'grouped_id': str(message.grouped_id) if message.grouped_id else None,
+                'grouped_id': int(message.grouped_id) if message.grouped_id is not None else 0,
                 'action': str(message.action) if message.action else None, 
             }
             messages.append(message_data)

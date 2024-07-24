@@ -2,6 +2,16 @@ from telethon.tl.functions.channels import GetFullChannelRequest
 from telethon.tl.types import InputPeerChannel
 
 async def get_chat_info(client, chat):
+    """
+    Retrieves information about a chat.
+
+    Args:
+        client (telethon.TelegramClient): The Telegram client.
+        chat (telethon.tl.types.InputPeer): The chat to retrieve information for.
+
+    Returns:
+        dict: A dictionary containing the chat information, including the chat ID, name, username, description, members count, and linked chat ID.
+    """
     if isinstance(chat, InputPeerChannel):
         full_chat = await client(GetFullChannelRequest(chat))
         return {

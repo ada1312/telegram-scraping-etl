@@ -6,6 +6,28 @@ from io import StringIO
 
 
 async def upload_to_bigquery(client, data, table_type, dataset_id, table_chat_config, table_chat_history, table_chat_info, table_user_info):
+    """
+    Uploads data to a BigQuery table.
+
+    Args:
+        client: The BigQuery client object.
+        data: The data to be uploaded to the table.
+        table_type: The type of table to upload the data to.
+        dataset_id: The ID of the dataset containing the table.
+        table_chat_config: The ID of the table for chat configuration data.
+        table_chat_history: The ID of the table for chat history data.
+        table_chat_info: The ID of the table for chat information data.
+        table_user_info: The ID of the table for user information data.
+
+    Raises:
+        ValueError: If the data is invalid or the table type is invalid.
+        BadRequest: If there is a bad request error when uploading the data.
+        GoogleAPIError: If there is an error connecting to BigQuery.
+        Exception: If there is any other error when uploading the data.
+
+    Returns:
+        None
+    """
     try:
         validate_data(data)
 
@@ -63,6 +85,15 @@ async def upload_to_bigquery(client, data, table_type, dataset_id, table_chat_co
 
 
 def validate_data(data):
+    """
+    Validates the input data.
+
+    Args:
+        data (list): A list of dictionaries representing the data to be validated.
+
+    Raises:
+        ValueError: If the data is empty, not a list, or contains items that are not dictionaries.
+    """
     if not data:
         raise ValueError("Data is empty")
     if not isinstance(data, list):

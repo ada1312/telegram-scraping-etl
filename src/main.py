@@ -16,8 +16,7 @@ load_dotenv()
 api_id = os.getenv("API_ID")
 api_hash = os.getenv("API_HASH")
 phone_number = os.getenv("PHONE_NUMBER")
-chat_usernames = os.getenv("CHAT_USERNAMES").split(',')  # Comma-separated list of usernames
-sample_size = int(os.getenv("SAMPLE_SIZE", 100))
+chat_usernames = os.getenv("CHAT_USERNAMES").split(',') 
 logging_level = os.getenv("LOGGING_LEVEL", "INFO").upper()
 project_id = os.getenv("PROJECT_ID")
 dataset_id = os.getenv("DATASET_ID")
@@ -25,7 +24,7 @@ table_chat_config = os.getenv("TABLE_CHAT_CONFIG")
 table_chat_history = os.getenv("TABLE_CHAT_HISTORY")
 table_chat_info = os.getenv("TABLE_CHAT_INFO")
 table_user_info = os.getenv("TABLE_USER_INFO")
-mode = os.getenv("MODE", "daily")
+mode = os.getenv("MODE", "day_ago")
 backload_start_date = os.getenv("BACKLOAD_START_DATE")
 backload_end_date = os.getenv("BACKLOAD_END_DATE")
 
@@ -63,10 +62,19 @@ async def main(mode, start_date=None, end_date=None):
             return
 
         # Determine dates to process
-        if mode == 'daily':
-            end_date = datetime.now(timezone.utc).replace(hour=23, minute=59, second=59, microsecond=999999)
-            start_date = end_date.replace(hour=0, minute=0, second=0, microsecond=0)
-            logging.info(f"Daily run mode: processing date {start_date.date()}")
+        if mode == 'day_ago':
+            today = datetime.now(timezone.utc).date()
+            yesterday = today - timedelta(days=1)
+            
+            # Start date: beginning of yesterday
+            start_date = datetime.combine(yesterday, datetime.min.time()).replace(tzinfo=timezone.utc)
+            
+            # End date: end of yesterday
+            end_date = datetime.combine(yesterday, datetime.max.time()).replace(tzinfo=timezone.utc)
+
+            # Print dates for debugging
+            print(f"Start Date: {start_date}")
+            print(f"End Date: {end_date}")
         elif mode == 'backload':
             if not start_date or not end_date:
                 logging.error("Backload mode requires both start_date and end_date.")
@@ -97,7 +105,7 @@ async def main(mode, start_date=None, end_date=None):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Telegram data collection script")
-    parser.add_argument("mode", choices=['daily', 'backload'], help="Run mode: 'daily' or 'backload'", default=mode, nargs='?')
+    parser.add_argument("mode", choices=['day_ago', 'backload'], help="Run mode: 'day_ago' or 'backload'", default=mode, nargs='?')
     parser.add_argument("--start_date", help="Start date for backload (format: YYYY-MM-DD)", default=backload_start_date)
     parser.add_argument("--end_date", help="End date for backload (format: YYYY-MM-DD)", default=backload_end_date)
     

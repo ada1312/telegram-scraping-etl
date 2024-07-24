@@ -135,7 +135,7 @@
   },
   {
     "name": "grouped_id",
-    "type": "STRING",
+    "type": "INTEGER",
     "mode": "NULLABLE",
     "description": "The unique identifier of the grouped message"
   },
