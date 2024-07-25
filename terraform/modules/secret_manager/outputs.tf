@@ -1,5 +1,7 @@
-output "secrets" {
+output "secret_ids" {
   value = {
-    for key, secret in google_secret_manager_secret.secrets : key => secret.id
+    api_id       = google_secret_manager_secret.api_id.id
+    api_hash     = google_secret_manager_secret.api_hash.id
+    phone_number = google_secret_manager_secret.phone_number.id
   }
 }

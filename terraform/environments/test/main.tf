@@ -57,7 +57,7 @@ module "cloud_run" {
   location                      = "us-central1"
   project_id                    = var.project_id
   service_account_email         = module.service_account.service_account_email
-  container_image               = "gcr.io/${var.project_id}/telegram-chat-etl:latest"
+  container_image               = "gcr.io/${var.project_id}/telegram_update_etl:latest"
   job_name                      = "telegram-chat-etl"
   scheduler_job_name            = "telegram-chat-etl"
   scheduler_schedule            = "0 1 * * *"
@@ -68,9 +68,9 @@ module "cloud_run" {
   chat_info                     = module.bigquery.table_chat_info
   user_info                     = module.bigquery.table_user_info
   logging_level                 = "INFO"
-  api_id_secret                 = module.secret_manager.secret_id["api_id"]
-  api_hash_secret               = module.secret_manager.secret_id["api_hash"]
-  phone_number_secret           = module.secret_manager.secret_id["phone_number"]
+  api_id_secret                 = module.secret_manager.secret_ids["api_id"]
+  api_hash_secret               = module.secret_manager.secret_ids["api_hash"]
+  phone_number_secret           = module.secret_manager.secret_ids["phone_number"]
   chat_username                 = "lobsters_chat"
   sample_size                   = 1000
   start_date                    = "2024-07-13"

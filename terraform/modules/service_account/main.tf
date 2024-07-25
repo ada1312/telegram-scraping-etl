@@ -17,3 +17,12 @@ resource "google_project_iam_member" "service_account_iam" {
   role    = "projects/${var.project_id}/roles/${google_project_iam_custom_role.custom_role.role_id}"
   member  = "serviceAccount:${google_service_account.service_account.email}"
 }
+
+resource "google_project_iam_binding" "secret_accessor" {
+  project = var.project_id
+  role    = "roles/secretmanager.secretAccessor"
+
+  members = [
+    "serviceAccount:telegram-chat-etl-agent@${var.project_id}.iam.gserviceaccount.com"
+  ]
+}
