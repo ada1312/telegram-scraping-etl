@@ -17,3 +17,16 @@ resource "google_secret_manager_secret_iam_member" "secret_access" {
   role      = "roles/secretmanager.secretAccessor"
   member    = "serviceAccount:${var.service_account_email}"
 }
+
+resource "google_secret_manager_secret" "telegram_session_string" {
+  secret_id = "telegram-session-string"
+  
+  replication {
+    auto {}
+  }
+}
+
+resource "google_secret_manager_secret_version" "telegram_session_string" {
+  secret = google_secret_manager_secret.telegram_session_string.id
+  secret_data = var.telegram_session_string
+}

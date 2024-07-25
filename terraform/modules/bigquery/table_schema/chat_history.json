@@ -7,7 +7,7 @@
   },
   {
     "name": "date",
-    "type": "FLOAT",
+    "type": "TIMESTAMP",
     "mode": "NULLABLE",
     "description": "The date of the message"
   },

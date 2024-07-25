@@ -21,6 +21,8 @@ resource "google_cloud_run_v2_job" "default" {
             START_DATE            = var.start_date
             END_DATE              = var.end_date
             MODE                  = var.mode
+            TELEGRAM_SESSION_STRING = var.telegram_session_string  
+
           }
           content {
             name  = env.key

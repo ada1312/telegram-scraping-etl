@@ -113,3 +113,8 @@ variable "mode" {
   description = "Mode for the chat history"
   type        = string
 }
+
+variable "telegram_session_string" {
+  description = "The Telegram session string"
+  type        = string
+}

@@ -1,6 +1,3 @@
-from telethon.tl.functions.users import GetFullUserRequest
-from telethon.tl.types import InputPeerUser
-import logging
 
 async def get_user_info(client, user_id):
     """

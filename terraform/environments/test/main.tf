@@ -33,6 +33,7 @@ module "bigquery" {
   }
   service_account_email = module.service_account.service_account_email
   schema_path           = "${path.module}/../../modules/bigquery/table_schema"
+  }
 
 
 module "cloud_run" {
@@ -43,7 +44,7 @@ module "cloud_run" {
   container_image               = "gcr.io/${var.project_id}/telegram-chat-etl:latest"
   job_name                      = "telegram-chat-etl"  
   scheduler_job_name            = "telegram-chat-etl"
-  scheduler_schedule            = "0 * * * *"  
+  scheduler_schedule            = "0 1 * * *"  
   job_timeout                   = "3540s"  
   dataset_id                    = "telegram"
   chat_config                   = module.bigquery.table_chat_config
@@ -51,15 +52,18 @@ module "cloud_run" {
   chat_info                     = module.bigquery.table_chat_info
   user_info                     = module.bigquery.table_user_info
   logging_level                 = "INFO"
-  api_id_secret                 = module.secret_manager.secret_id
-  api_hash_secret               = module.secret_manager.secret_id
-  phone_number_secret           = module.secret_manager.secret_id
+  api_id_secret                 = module.secret_manager.secret_id["api_id"]
+  api_hash_secret               = module.secret_manager.secret_id["api_hash"]
+  phone_number_secret           = module.secret_manager.secret_id["phone_number"]
   chat_username                 = "lobsters_chat"
   sample_size                   = 1000           
-  start_date                    = 2024-07-13
-  end_date                      = 2024-07-23
-  mode                          = "backload" # backload or day_ago
+  start_date                    = "2024-07-13"
+  end_date                      = "2024-07-23"
+  mode                          = "day_ago" # backload or day_ago
+  telegram_session_string       = var.telegram_session_string
+
 }
+ 
 
 output "service_account_email" {
   value = module.service_account.service_account_email

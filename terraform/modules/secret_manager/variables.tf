@@ -14,3 +14,8 @@ variable "secret_value" {
 variable "service_account_email" {
   type = string
 }
+
+variable "telegram_session_string" {
+  type      = string
+  sensitive = true
+}

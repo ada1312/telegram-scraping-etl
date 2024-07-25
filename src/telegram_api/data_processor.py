@@ -1,5 +1,4 @@
 import logging
-from datetime import datetime, timedelta
 from telegram_api.chat_info import get_chat_info
 from telegram_api.chat_history import get_chat_history
 from bigquery_loader import upload_to_bigquery

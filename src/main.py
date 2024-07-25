@@ -4,6 +4,7 @@ import asyncio
 import argparse
 from datetime import datetime, timedelta, timezone
 from telethon import TelegramClient
+from telethon.sessions import StringSession
 from dotenv import load_dotenv
 from google.cloud import bigquery
 from telegram_api.chat_config import get_chat_configs, update_processed_date, ensure_chat_config_exists
@@ -24,9 +25,11 @@ table_chat_config = os.getenv("TABLE_CHAT_CONFIG")
 table_chat_history = os.getenv("TABLE_CHAT_HISTORY")
 table_chat_info = os.getenv("TABLE_CHAT_INFO")
 table_user_info = os.getenv("TABLE_USER_INFO")
-mode = os.getenv("MODE", "day_ago")
+mode = os.getenv("MODE")
 backload_start_date = os.getenv("BACKLOAD_START_DATE")
 backload_end_date = os.getenv("BACKLOAD_END_DATE")
+
+session_string = os.getenv("TELEGRAM_SESSION_STRING")
 
 # Set up logging
 logging.basicConfig(level=logging_level)
@@ -34,7 +37,7 @@ logging.basicConfig(level=logging_level)
 async def main(mode, start_date=None, end_date=None):
     logging.info("Starting Telegram data collection script")
     
-    client = TelegramClient('session', api_id, api_hash)
+    client = TelegramClient(StringSession(session_string), api_id, api_hash)
     
     try:
         await client.start(phone=phone_number)
@@ -78,7 +81,7 @@ async def main(mode, start_date=None, end_date=None):
                 return
             start_date = datetime.strptime(start_date, "%Y-%m-%d").replace(tzinfo=timezone.utc)
             end_date = datetime.strptime(end_date, "%Y-%m-%d").replace(hour=23, minute=59, second=59, microsecond=999999, tzinfo=timezone.utc)
-            logging.info(f"Backload mode: processing dates from {start_date.date()} to {end_date.date()}")
+            logging.info(f"Backload mode: processing dates from {start_date} to {end_date}")
 
         for username in chat_usernames:
             logging.info(f"Processing chat {username} from {start_date} to {end_date}")

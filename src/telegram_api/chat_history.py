@@ -1,5 +1,4 @@
 import logging
-from telethon.tl.types import InputPeerUser, InputPeerChannel
 from telegram_api.user_info import get_user_info
 
 async def get_chat_history(client, chat, start_date, end_date):
@@ -21,21 +20,20 @@ async def get_chat_history(client, chat, start_date, end_date):
         Exception: If there is an error retrieving the chat history.
 
     """
+    logging.info(f"Fetching chat history for {chat} from {start_date} to {end_date}")
     try:
         messages = []
         users = {}
         
-        # Convert chat to InputPeer if necessary
-        if isinstance(chat, str):
-            chat = await client.get_input_entity(chat)
-        
-        async for message in client.iter_messages(chat, offset_date=end_date, reverse=True):
+        async for message in client.iter_messages(chat, offset_date=end_date, reverse=False):
+            logging.debug(f"Processing message with date: {message.date}")
             if message.date < start_date:
+                logging.info(f"Reached message before start date. Stopping.")
                 break
             
             message_data = {
                 'id': message.id,
-                'date': message.date.timestamp(),
+                'date': message.date.strftime('%Y-%m-%d %H:%M:%S %z'),
                 'from_user': str(message.from_id.user_id) if hasattr(message.from_id, 'user_id') else None,
                 'text': message.text,
                 'sender': str(message.sender_id) if message.sender_id else None,
@@ -61,11 +59,14 @@ async def get_chat_history(client, chat, start_date, end_date):
                 'action': str(message.action) if message.action else None, 
             }
             messages.append(message_data)
-            
+                        
             if hasattr(message.from_id, 'user_id') and message.from_id.user_id not in users:
                 user_info = await get_user_info(client, message.from_id.user_id)
                 if user_info:
                     users[str(message.from_id.user_id)] = user_info
+
+        logging.info(f"Fetching messages from {start_date} to {end_date}")
+
 
         return messages, users
     except Exception as e:

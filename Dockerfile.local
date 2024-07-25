@@ -1,6 +1,20 @@
 # For more information, please refer to https://aka.ms/vscode-docker-python
 FROM python:3.11-slim
 
+
+ENV SAMPLE_SIZE=1000
+ENV LOGGING_LEVEL=INFO
+ENV PROJECT_ID = "container-testing-381309"
+ENV DATASET_ID="telegram"
+ENV TABLE_CHAT_CONFIG="chat_config"
+ENV TABLE_CHAT_HISTORY="chat_history"
+ENV TABLE_CHAT_INFO="chat_info"
+ENV TABLE_USER_INFO="user_info"
+ENV MODE = "day_ago" # 'day_ago' or 'backload'
+ENV BACKLOAD_START_DATE = 2024-07-13
+ENV BACKLOAD_END_DATE = 2024-07-23
+
+
 # Set the working directory inside the container
 WORKDIR /src
 

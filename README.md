@@ -31,21 +31,23 @@ pip install -r requirements.txt
 ```
 
 3. Set up your environment variables in a .env file:
-    API_ID=your_telegram_api_id
-    API_HASH=your_telegram_api_hash
-    PHONE_NUMBER=your_telegram_phone_number
-    CHAT_USERNAME=username_of_chats
-    SAMPLE_SIZE=number_for_specific_size_NONE_for_all_histroy
-    PROJECT_ID=your_google_cloud_project_id
-    DATASET_ID=your_bigquery_dataset_id
-    TABLE_CHAT_CONFIG=chat_config
-    TABLE_CHAT_HISTORY=chat_history
-    TABLE_CHAT_INFO=chat_info
-    TABLE_USER_INFO=user_info
-    LOGGING_LEVEL=INFO
-    MODE="day_ago" # 'day_ago' or 'backload'
-    BACKLOAD_START_DATE=YYYY-MM-DD
-    BACKLOAD_END_DATE=YYYY-MM-DD
+- API_ID=your_telegram_api_id
+- API_HASH=your_telegram_api_hash
+- PHONE_NUMBER=your_telegram_phone_number
+- CHAT_USERNAME=username_of_chats
+- SAMPLE_SIZE=number_for_specific_size_NONE_for_all_histroy
+- PROJECT_ID=your_google_cloud_project_id
+- DATASET_ID=your_bigquery_dataset_id
+- TABLE_CHAT_CONFIG=chat_config
+- TABLE_CHAT_HISTORY=chat_history
+- TABLE_CHAT_INFO=chat_info
+- TABLE_USER_INFO=user_info
+- LOGGING_LEVEL=INFO
+- MODE="day_ago" # 'day_ago' or 'backload'
+- BACKLOAD_START_DATE=YYYY-MM-DD
+- BACKLOAD_END_DATE=YYYY-MM-DD
+- TELEGRAM_SESSION_STRING: The session string generated in step below
+
 
 ## Usage
 The script can be run in two modes: day_ago and backload.
@@ -135,4 +137,63 @@ Restricted, scam, and fake flags
 Access hash, bio, and bot info
 
 ## Deployment
-This script is designed to be run as a scheduled job, either on a local machine or in a cloud environment like Google Cloud Run. Set the environment variables in your deployment configuration.
+
+This script is designed to be run as a scheduled job in Google Cloud Run. Follow these steps to deploy the application:
+
+### Prerequisites
+
+- Docker installed on your local machine
+- Google Cloud SDK installed and configured
+- Terraform installed
+- Access to a Google Cloud project with necessary APIs enabled (Cloud Run, Container Registry, BigQuery, Secret Manager)
+
+### Deployment Process
+
+1. **Build and Push Docker Image**
+
+   Build the Docker image locally:
+```bash
+   docker build -t gcr.io/container-testing-381309/telegram_update_etl:latest .
+   ```
+    Push the image to Google Container Registry:
+```bash
+   docker push gcr.io/container-testing-381309/telegram_update_etl:latest
+   ```
+   Alternatively, use Cloud Build:
+```bash
+   gcloud builds submit --config=cloudbuild.yaml .
+   ```
+
+2. **Generate Telegram Session String**
+Run the following Python script to generate a session string:
+
+```python
+from telethon import TelegramClient
+from telethon.sessions import StringSession
+
+api_id = 'your_api_id'
+api_hash = 'your_api_hash'
+phone_number = 'your_phone_number'
+
+with TelegramClient(StringSession(), api_id, api_hash) as client:
+    client.start(phone=phone_number)
+    print(client.session.save())
+    ```
+Save the output string securely.
+
+3. **Apply Terraform Configuration Initialize Terraform**
+```bash
+terraform init
+   ```
+Plan your changes:
+```bash
+terraform plan -var="telegram_session_string=your_session_string_here"
+```
+Apply the changes:
+```bash
+terraform apply -var="telegram_session_string=your_session_string_here"
+```
+Or use a .tfvars file for sensitive information:
+```bash
+terraform apply -var-file="secrets.tfvars"
+```
