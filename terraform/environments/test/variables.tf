@@ -1,27 +1,20 @@
 variable "project_id" {
-  description = "The GCP project ID."
-  type        = string
-}
-variable "telegram_phone_number" {
-  type        = string
-  sensitive   = true
-  description = "Telegram phone number"
+  type = string
 }
 
-variable "telegram_api_id" {
-  type        = string
-  sensitive   = true
-  description = "Telegram API ID"
+variable "api_id" {
+  type = string
 }
 
-variable "telegram_api_hash" {
-  type        = string
-  sensitive   = true
-  description = "Telegram API hash"
+variable "api_hash" {
+  type = string
+}
+
+variable "phone_number" {
+  type = string
 }
 
 variable "telegram_session_string" {
-  type        = string
-  sensitive   = true
-  description = "Telegram session string"
+  type      = string
+  sensitive = true
 }

@@ -9,20 +9,19 @@ resource "google_cloud_run_v2_job" "default" {
         
         dynamic "env" {
           for_each = {
-            LOGGING_LEVEL         = var.logging_level
-            PROJECT_ID            = var.project_id
-            DATASET_ID            = var.dataset_id
-            CHAT_CONFIG           = var.chat_config
-            CHAT_HISTORY          = var.chat_history
-            CHAT_INFO             = var.chat_info
-            USER_INFO             = var.user_info
-            CHAT_USERNAME         = var.chat_username
-            SAMPLE_SIZE           = var.sample_size
-            START_DATE            = var.start_date
-            END_DATE              = var.end_date
-            MODE                  = var.mode
-            TELEGRAM_SESSION_STRING = var.telegram_session_string  
-
+            LOGGING_LEVEL            = var.logging_level
+            PROJECT_ID               = var.project_id
+            DATASET_ID               = var.dataset_id
+            CHAT_CONFIG              = var.chat_config
+            CHAT_HISTORY             = var.chat_history
+            CHAT_INFO                = var.chat_info
+            USER_INFO                = var.user_info
+            CHAT_USERNAME            = var.chat_username
+            SAMPLE_SIZE              = var.sample_size
+            START_DATE               = var.start_date
+            END_DATE                 = var.end_date
+            MODE                     = var.mode
+            TELEGRAM_SESSION_STRING  = var.telegram_session_string
           }
           content {
             name  = env.key

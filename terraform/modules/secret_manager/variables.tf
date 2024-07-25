@@ -3,11 +3,11 @@ variable "project_id" {
 }
 
 variable "secret_id" {
-  type = string
+  type = map(string)
 }
 
 variable "secret_value" {
-  type      = string
+  type      = map(string)
   sensitive = true
 }
 
