@@ -39,6 +39,10 @@ variable "role_permissions" {
   default     = [
     "bigquery.jobs.create",
     "run.jobs.run",
-    "run.routes.invoke"
+    "run.routes.invoke",
+    "bigquery.tables.get",
+    "bigquery.tables.getData",
+    "bigquery.datasets.get",
+
   ]
 }

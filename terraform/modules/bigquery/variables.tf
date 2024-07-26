@@ -3,6 +3,12 @@ variable "dataset_id" {
   type        = string
 }
 
+variable "dataset_description" {
+  description = "The description for the BigQuery dataset."
+  type        = string
+  
+}
+
 variable "location" {
   description = "The location for the BigQuery dataset."
   type        = string
@@ -35,10 +41,5 @@ variable "labels" {
 
 variable "service_account_email" {
   description = "The email address of the service account to use for authentication."
-  type        = string
-}
-
-variable "schema_path" {
-  description = "The path to the schema file for the BigQuery table"
   type        = string
 }

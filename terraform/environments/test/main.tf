@@ -16,7 +16,10 @@ module "service_account" {
   role_permissions   = [
     "bigquery.jobs.create",
     "run.jobs.run",
-    "run.routes.invoke"
+    "run.routes.invoke",
+    "bigquery.tables.get",
+    "bigquery.tables.getData",
+    "bigquery.datasets.get"
   ]
 }
 
@@ -28,11 +31,11 @@ module "bigquery" {
   table_chat_history          = "chat_history"
   table_chat_info             = "chat_info"
   table_user_info             = "user_info"
+  dataset_description         = "Telegram chat data" 
   labels                      = {
     env = "test"
   }
   service_account_email       = module.service_account.service_account_email
-  schema_path                 = "${path.module}/../../modules/bigquery/table_schema"
 }
 
 module "secret_manager" {
@@ -57,25 +60,26 @@ module "cloud_run" {
   location                      = "us-central1"
   project_id                    = var.project_id
   service_account_email         = module.service_account.service_account_email
-  container_image               = "gcr.io/${var.project_id}/telegram_update_etl:latest"
+  container_image               = "gcr.io/container-testing-381309/telegram_update_etl:latest"
   job_name                      = "telegram-chat-etl"
   scheduler_job_name            = "telegram-chat-etl"
   scheduler_schedule            = "0 1 * * *"
   job_timeout                   = "3540s"
-  dataset_id                    = "telegram"
+
+  api_id_secret                 = module.secret_manager.secret_ids["api_id"]
+  api_hash_secret               = module.secret_manager.secret_ids["api_hash"]
+  phone_number_secret           = module.secret_manager.secret_ids["phone_number"]
+  chat_usernames                = "pythontelegrambotgroup,binanceexchange,lobsters_chat"
+  sample_size                   = 1000
+  logging_level                 = "INFO"
+  dataset_id                    = module.bigquery.dataset_id
   chat_config                   = module.bigquery.table_chat_config
   chat_history                  = module.bigquery.table_chat_history
   chat_info                     = module.bigquery.table_chat_info
   user_info                     = module.bigquery.table_user_info
-  logging_level                 = "INFO"
-  api_id_secret                 = module.secret_manager.secret_ids["api_id"]
-  api_hash_secret               = module.secret_manager.secret_ids["api_hash"]
-  phone_number_secret           = module.secret_manager.secret_ids["phone_number"]
-  chat_username                 = "lobsters_chat"
-  sample_size                   = 1000
-  start_date                    = "2024-07-13"
-  end_date                      = "2024-07-23"
-  mode                          = "backload" # backload or day_ago
+  mode                          = "day_ago" # backload or day_ago
+  backload_start_date           = "2024-07-13"
+  backload_end_date             = "2024-07-23"
   telegram_session_string       = var.telegram_session_string
 }
 

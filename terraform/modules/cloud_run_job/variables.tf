@@ -89,7 +89,7 @@ variable "phone_number_secret" {
   description = "The full resource name of the phone number secret"
 }
 
-variable "chat_username" {
+variable "chat_usernames" {
   description = "Chat username for which to load the chat history"
   type        = string
 }
@@ -99,12 +99,12 @@ variable "sample_size" {
   type        = string
 }
 
-variable "start_date" {
+variable "backload_start_date" {
   description = "Start date for the chat history"
   type        = string
 }
 
-variable "end_date" {
+variable "backload_end_date" {
   description = "End date for the chat history"
   type        = string
 }
