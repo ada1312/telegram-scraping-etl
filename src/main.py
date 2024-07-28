@@ -35,7 +35,7 @@ session_string = os.getenv("TELEGRAM_SESSION_STRING")
 logging.basicConfig(level=logging_level)
 
 async def main(mode, start_date=None, end_date=None):
-    logging.info("Starting Telegram data collection script")
+    logging.info(f"Starting Telegram data collection script in {mode} mode")
     
     client = TelegramClient(StringSession(session_string), api_id, api_hash)
     
@@ -68,20 +68,26 @@ async def main(mode, start_date=None, end_date=None):
         if mode == 'day_ago':
             today = datetime.now(timezone.utc).date()
             yesterday = today - timedelta(days=1)
-            
-            # Start date: beginning of yesterday
             start_date = datetime.combine(yesterday, datetime.min.time()).replace(tzinfo=timezone.utc)
-            
-            # End date: end of yesterday
             end_date = datetime.combine(yesterday, datetime.max.time()).replace(tzinfo=timezone.utc)
-
         elif mode == 'backload':
             if not start_date or not end_date:
                 logging.error("Backload mode requires both start_date and end_date.")
                 return
             start_date = datetime.strptime(start_date, "%Y-%m-%d").replace(tzinfo=timezone.utc)
             end_date = datetime.strptime(end_date, "%Y-%m-%d").replace(hour=23, minute=59, second=59, microsecond=999999, tzinfo=timezone.utc)
-            logging.info(f"Backload mode: processing dates from {start_date} to {end_date}")
+        elif mode == 'recent':
+            end_date = datetime.now(timezone.utc)
+            start_date = max([config['dates_to_load'][-1] for config in chat_configs.values() if config['dates_to_load']])
+            start_date = datetime.combine(start_date, datetime.min.time()).replace(tzinfo=timezone.utc)
+            if start_date >= end_date:
+                logging.info("No new data to process. Exiting.")
+                return
+        else:
+            logging.error(f"Invalid mode: {mode}")
+            return
+
+        logging.info(f"Processing data from {start_date} to {end_date}")
 
         for username in chat_usernames:
             logging.info(f"Processing chat {username} from {start_date} to {end_date}")
@@ -89,7 +95,11 @@ async def main(mode, start_date=None, end_date=None):
             logging.info(f"Finished processing chat {username}")
 
             # Update processed dates
-            processed_dates = [start_date.date() + timedelta(days=i) for i in range((end_date.date() - start_date.date()).days + 1)]
+            if mode == 'recent':
+                processed_dates = [end_date.date()]
+            else:
+                processed_dates = [start_date.date() + timedelta(days=i) for i in range((end_date.date() - start_date.date()).days + 1)]
+
             await update_processed_date(bq_client, dataset_id, table_chat_config, username, processed_dates)
             logging.info(f"Updated chat config for {username} with processed dates: {processed_dates}")
 
@@ -105,7 +115,7 @@ async def main(mode, start_date=None, end_date=None):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Telegram data collection script")
-    parser.add_argument("mode", choices=['day_ago', 'backload'], help="Run mode: 'day_ago' or 'backload'", default=mode, nargs='?')
+    parser.add_argument("mode", choices=['day_ago', 'backload', 'recent'], help="Run mode: 'day_ago', 'backload', or 'recent'", default=mode, nargs='?')
     parser.add_argument("--start_date", help="Start date for backload (format: YYYY-MM-DD)", default=backload_start_date)
     parser.add_argument("--end_date", help="End date for backload (format: YYYY-MM-DD)", default=backload_end_date)
     

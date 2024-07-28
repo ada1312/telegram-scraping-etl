@@ -80,6 +80,19 @@ Set the following environment variables:
     BACKLOAD_END_DATE=2023-12-31
     ```
 
+##  Recent Mode
+This mode process historical data for specific minutes that are setu up via chrom job. 
+
+    ```bash
+    python main.py recent --minutes 30
+
+    ```
+Set the following environment variables:
+
+    ```bash
+    MODE=recent
+    ```
+
 ## BigQuery Schema
 The script expects the following tables in your BigQuery dataset:
 

@@ -1,5 +1,7 @@
 import logging
 from telegram_api.user_info import get_user_info
+from google.cloud import bigquery
+
 
 async def get_chat_history(client, chat, start_date, end_date):
     """
@@ -29,6 +31,11 @@ async def get_chat_history(client, chat, start_date, end_date):
             logging.debug(f"Processing message with date: {message.date}")
             if message.date < start_date:
                 logging.info(f"Reached message before start date. Stopping.")
+                break
+            
+            # Check if the message already exists in BigQuery
+            if await message_exists_in_bigquery(message.id, str(message.chat_id)):
+                logging.info(f"Message {message.id} already exists in BigQuery. Stopping.")
                 break
             
             message_data = {
@@ -72,3 +79,25 @@ async def get_chat_history(client, chat, start_date, end_date):
     except Exception as e:
         logging.error(f"Error getting chat history for {chat}: {e}")
         return [], {}
+    
+async def message_exists_in_bigquery(message_id, chat_id, bq_client, dataset_id, table_chat_history):
+    query = f"""
+    SELECT COUNT(*) as count
+    FROM `{dataset_id}.{table_chat_history}`
+    WHERE id = @message_id AND chat_id = @chat_id
+    """
+    
+    job_config = bigquery.QueryJobConfig(
+        query_parameters=[
+            bigquery.ScalarQueryParameter("message_id", "INTEGER", message_id),
+            bigquery.ScalarQueryParameter("chat_id", "STRING", chat_id),
+        ]
+    )
+    
+    query_job = bq_client.query(query, job_config=job_config)
+    results = await query_job.result()
+    
+    for row in results:
+        return row['count'] > 0
+    
+    return False

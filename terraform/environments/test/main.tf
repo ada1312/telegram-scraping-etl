@@ -16,6 +16,7 @@ module "service_account" {
   role_permissions   = [
     "bigquery.jobs.create",
     "run.jobs.run",
+    "run.executions.cancel",
     "run.routes.invoke",
     "bigquery.tables.get",
     "bigquery.tables.getData",
@@ -77,7 +78,7 @@ module "cloud_run" {
   chat_history                  = module.bigquery.table_chat_history
   chat_info                     = module.bigquery.table_chat_info
   user_info                     = module.bigquery.table_user_info
-  mode                          = "day_ago" # backload or day_ago
+  mode                          = "day_ago" # backload or day_ago or recent
   backload_start_date           = "2024-07-13"
   backload_end_date             = "2024-07-23"
   telegram_session_string       = var.telegram_session_string
