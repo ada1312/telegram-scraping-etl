@@ -3,7 +3,7 @@ from telegram_api.user_info import get_user_info
 from google.cloud import bigquery
 
 
-async def get_chat_history(client, chat, start_date, end_date):
+async def get_chat_history(client, chat, start_date, end_date, bq_client, dataset_id, table_chat_history):
     """
     Retrieves the chat history from a given chat within a specified date range.
 
@@ -34,7 +34,7 @@ async def get_chat_history(client, chat, start_date, end_date):
                 break
             
             # Check if the message already exists in BigQuery
-            if await message_exists_in_bigquery(message.id, str(message.chat_id)):
+            if await message_exists_in_bigquery(message.id, message.chat_id, bq_client, dataset_id, table_chat_history):
                 logging.info(f"Message {message.id} already exists in BigQuery. Stopping.")
                 break
             
@@ -89,13 +89,13 @@ async def message_exists_in_bigquery(message_id, chat_id, bq_client, dataset_id,
     
     job_config = bigquery.QueryJobConfig(
         query_parameters=[
-            bigquery.ScalarQueryParameter("message_id", "INTEGER", message_id),
-            bigquery.ScalarQueryParameter("chat_id", "STRING", chat_id),
+            bigquery.ScalarQueryParameter("message_id", "INT64", message_id),
+            bigquery.ScalarQueryParameter("chat_id", "INT64", chat_id),
         ]
     )
     
     query_job = bq_client.query(query, job_config=job_config)
-    results = await query_job.result()
+    results = query_job.result()  # Note: No await here
     
     for row in results:
         return row['count'] > 0

@@ -84,7 +84,7 @@ class DataProcessor:
                 logging.info(f"Chat info fetched: {chat_info}")
 
             logging.info(f"Fetching chat history for {username} from {start_date} to {end_date}")
-            messages, users = await get_chat_history(self.client, chat, start_date, end_date)
+            messages, users = await get_chat_history(self.client, chat, start_date, end_date, self.bq_client, self.dataset_id, self.table_chat_history)
 
             logging.info(f"Fetched {len(messages)} messages and {len(users)} users")
             if messages:
