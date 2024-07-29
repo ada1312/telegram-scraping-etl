@@ -94,6 +94,7 @@ async def update_processed_date(bq_client, dataset_id, table_chat_config, chat_i
     SET dates_to_load = ARRAY(
         SELECT DISTINCT date
         FROM UNNEST(ARRAY_CONCAT(dates_to_load, @new_dates)) AS date
+        WHERE date <= CURRENT_DATE()
     )
     WHERE id = @chat_id
     """

@@ -2,6 +2,8 @@ import logging
 from telegram_api.chat_info import get_chat_info
 from telegram_api.chat_history import get_chat_history
 from bigquery_loader import upload_to_bigquery
+from datetime import datetime, time, timezone, timedelta
+from telegram_api.chat_config import get_chat_configs
 
 class DataProcessor:
     def __init__(self, client, bq_client, dataset_id, table_chat_config, table_chat_history, table_chat_info, table_user_info):
@@ -62,28 +64,35 @@ class DataProcessor:
         except Exception as e:
             logging.error(f"Error fetching existing chats: {e}", exc_info=True)
 
-    async def process_chat(self, username, start_date, end_date):
-        """
-        Processes a chat by retrieving chat information, chat history, and uploading the data to BigQuery.
-
-        Args:
-        - username: The username of the chat to process.
-        - start_date: The start date of the chat history to retrieve.
-        - end_date: The end date of the chat history to retrieve.
-        """
+    async def process_chat(self, username, start_date, end_date, chat_config):
         try:
-            logging.info(f"Starting to process chat for {username} from {start_date} to {end_date}")
             chat = await self.client.get_entity(username)
             chat_id = str(chat.id)
-            logging.info(f"Retrieved chat entity. Chat ID: {chat_id}")
 
-            if chat_id not in self.existing_chats and chat_id not in self.new_chats:
-                logging.info(f"Fetching chat info for {username}")
-                chat_info = await get_chat_info(self.client, chat)
-                self.new_chats[chat_id] = chat_info
-                logging.info(f"Chat info fetched: {chat_info}")
+            if chat_config and chat_config['dates_to_load']:
+                last_processed_date = max(chat_config['dates_to_load'])
+                last_processed_datetime = datetime.combine(last_processed_date, time.min, tzinfo=timezone.utc)
+                
+                # Ensure we're not processing data from the future
+                if last_processed_datetime > end_date:
+                    logging.info(f"No new data to process for {username} since {last_processed_datetime}")
+                    return
+                
+                # Use the later of start_date and last_processed_datetime
+                start_date = max(start_date, last_processed_datetime)
 
-            logging.info(f"Fetching chat history for {username} from {start_date} to {end_date}")
+            # Ensure end_date is not in the future
+            current_time = datetime.now(timezone.utc)
+            end_date = min(end_date, current_time)
+
+            # Ensure start_date is not after end_date
+            if start_date >= end_date:
+                logging.info(f"No new data to process for {username}. Start date {start_date} is not before end date {end_date}")
+                return
+
+            logging.info(f"Processing chat for {username} from {start_date} to {end_date}")
+
+            # Fetch chat history
             messages, users = await get_chat_history(self.client, chat, start_date, end_date, self.bq_client, self.dataset_id, self.table_chat_history)
 
             logging.info(f"Fetched {len(messages)} messages and {len(users)} users")

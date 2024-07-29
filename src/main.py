@@ -78,20 +78,34 @@ async def main(mode, start_date=None, end_date=None):
             end_date = datetime.strptime(end_date, "%Y-%m-%d").replace(hour=23, minute=59, second=59, microsecond=999999, tzinfo=timezone.utc)
         elif mode == 'recent':
             end_date = datetime.now(timezone.utc)
-            start_date = max([config['dates_to_load'][-1] for config in chat_configs.values() if config['dates_to_load']])
-            start_date = datetime.combine(start_date, datetime.min.time()).replace(tzinfo=timezone.utc)
-            if start_date >= end_date:
-                logging.info("No new data to process. Exiting.")
-                return
-        else:
-            logging.error(f"Invalid mode: {mode}")
-            return
+            
+            # Query BigQuery for the actual last processed date
+            query = f"""
+            SELECT MAX(date) as last_processed_date
+            FROM `{dataset_id}.{table_chat_history}`
+            """
+            query_job = bq_client.query(query)
+            results = query_job.result()
+            last_processed_date = list(results)[0]['last_processed_date']
+            
+            if last_processed_date:
+                start_date = last_processed_date.replace(tzinfo=timezone.utc) + timedelta(seconds=1)
+            else:
+                start_date = end_date - timedelta(days=1)  # Default to 1 day ago if no data
+            
+            # Ensure we're not processing future data
+            if start_date > end_date:
+                start_date = end_date - timedelta(days=1)
 
         logging.info(f"Processing data from {start_date} to {end_date}")
 
         for username in chat_usernames:
-            logging.info(f"Processing chat {username} from {start_date} to {end_date}")
-            await data_processor.process_chat(username, start_date, end_date)
+            chat_config = chat_configs.get(username)
+            if not chat_config:
+                logging.warning(f"No chat config found for {username}. Skipping.")
+                continue
+
+            await data_processor.process_chat(username, start_date, end_date, chat_config)
             logging.info(f"Finished processing chat {username}")
 
             # Update processed dates
@@ -100,7 +114,7 @@ async def main(mode, start_date=None, end_date=None):
             else:
                 processed_dates = [start_date.date() + timedelta(days=i) for i in range((end_date.date() - start_date.date()).days + 1)]
 
-            await update_processed_date(bq_client, dataset_id, table_chat_config, username, processed_dates)
+            await update_processed_date(bq_client, dataset_id, table_chat_config, chat_config['id'], processed_dates)
             logging.info(f"Updated chat config for {username} with processed dates: {processed_dates}")
 
         await data_processor.upload_new_data()
