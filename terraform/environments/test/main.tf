@@ -64,7 +64,7 @@ module "cloud_run" {
   container_image               = "gcr.io/container-testing-381309/telegram_update_etl:latest"
   job_name                      = "telegram-chat-etl"
   scheduler_job_name            = "telegram-chat-etl"
-  scheduler_schedule            = "0 1 * * *"
+  scheduler_schedule            = "0 * * * *"
   job_timeout                   = "3540s"
 
   api_id_secret                 = module.secret_manager.secret_ids["api_id"]
@@ -78,7 +78,7 @@ module "cloud_run" {
   chat_history                  = module.bigquery.table_chat_history
   chat_info                     = module.bigquery.table_chat_info
   user_info                     = module.bigquery.table_user_info
-  mode                          = "day_ago" # backload or day_ago or recent
+  mode                          = "recent" # backload or day_ago or recent
   backload_start_date           = "2024-07-13"
   backload_end_date             = "2024-07-23"
   telegram_session_string       = var.telegram_session_string
