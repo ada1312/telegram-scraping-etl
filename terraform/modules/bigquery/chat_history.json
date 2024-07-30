@@ -91,7 +91,7 @@
   },
   {
     "name": "edit_date",
-    "type": "TIMESTAMP",
+    "type": "FLOAT",
     "mode": "NULLABLE",
     "description": "The date of the edit"
   },
