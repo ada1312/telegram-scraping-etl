@@ -49,7 +49,8 @@ async def main(mode, start_date=None, end_date=None):
         data_processor = DataProcessor(
             client, bq_client, dataset_id, 
             table_chat_config, table_chat_history, 
-            table_chat_info, table_user_info
+            table_chat_info, table_user_info,
+            is_backloading=(mode == 'backload')
         )
         await data_processor.initialize()
         logging.info("DataProcessor initialized")
@@ -70,12 +71,17 @@ async def main(mode, start_date=None, end_date=None):
             yesterday = today - timedelta(days=1)
             start_date = datetime.combine(yesterday, datetime.min.time()).replace(tzinfo=timezone.utc)
             end_date = datetime.combine(yesterday, datetime.max.time()).replace(tzinfo=timezone.utc)
-        elif mode == 'backload':
+        if mode == 'backload':
             if not start_date or not end_date:
                 logging.error("Backload mode requires both start_date and end_date.")
                 return
             start_date = datetime.strptime(start_date, "%Y-%m-%d").replace(tzinfo=timezone.utc)
             end_date = datetime.strptime(end_date, "%Y-%m-%d").replace(hour=23, minute=59, second=59, microsecond=999999, tzinfo=timezone.utc)
+            
+            # Add this check
+            if start_date > datetime.now(timezone.utc) or end_date > datetime.now(timezone.utc):
+                logging.error("Start date or end date is in the future. Please check your dates.")
+                return
         elif mode == 'recent':
             end_date = datetime.now(timezone.utc)
             
