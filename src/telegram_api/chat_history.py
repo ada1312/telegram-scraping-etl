@@ -17,7 +17,12 @@ async def get_message_reactions(message):
     if hasattr(message, 'reactions') and message.reactions:
         reactions = []
         for reaction in message.reactions.results:
-            emoji = decode_emoji(reaction.reaction.emoticon)
+            if hasattr(reaction.reaction, 'emoticon'):
+                emoji = decode_emoji(reaction.reaction.emoticon)
+            elif hasattr(reaction.reaction, 'document_id'):
+                emoji = f"CustomEmoji:{reaction.reaction.document_id}"
+            else:
+                emoji = "UnknownEmoji"
             reactions.append(f"{emoji}:{reaction.count}")
         reaction_str = ", ".join(reactions)
     return reaction_str

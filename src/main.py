@@ -1,6 +1,7 @@
 import logging
 import os
 import asyncio
+import time
 import argparse
 from datetime import datetime, timedelta, timezone
 from telethon import TelegramClient
@@ -37,7 +38,12 @@ logging.basicConfig(level=logging_level)
 async def main(mode, start_date=None, end_date=None):
     logging.info(f"Starting Telegram data collection script in {mode} mode")
     
-    client = TelegramClient(StringSession(session_string), api_id, api_hash)
+    last_heartbeat = time.time()
+    last_activity = time.time()
+    heartbeat_interval = 300  # Log heartbeat every 5 minutes
+    inactivity_timeout = 1800  # 30 minutes
+
+    client = TelegramClient(StringSession(session_string), api_id, api_hash, receive_updates=False)
     
     try:
         await client.start(phone=phone_number)
@@ -71,21 +77,19 @@ async def main(mode, start_date=None, end_date=None):
             yesterday = today - timedelta(days=1)
             start_date = datetime.combine(yesterday, datetime.min.time()).replace(tzinfo=timezone.utc)
             end_date = datetime.combine(yesterday, datetime.max.time()).replace(tzinfo=timezone.utc)
-        if mode == 'backload':
+        elif mode == 'backload':
             if not start_date or not end_date:
                 logging.error("Backload mode requires both start_date and end_date.")
                 return
             start_date = datetime.strptime(start_date, "%Y-%m-%d").replace(tzinfo=timezone.utc)
             end_date = datetime.strptime(end_date, "%Y-%m-%d").replace(hour=23, minute=59, second=59, microsecond=999999, tzinfo=timezone.utc)
             
-            # Add this check
             if start_date > datetime.now(timezone.utc) or end_date > datetime.now(timezone.utc):
                 logging.error("Start date or end date is in the future. Please check your dates.")
                 return
         elif mode == 'recent':
             end_date = datetime.now(timezone.utc)
             
-            # Query BigQuery for the actual last processed date
             query = f"""
             SELECT MAX(date) as last_processed_date
             FROM `{dataset_id}.{table_chat_history}`
@@ -97,15 +101,23 @@ async def main(mode, start_date=None, end_date=None):
             if last_processed_date:
                 start_date = last_processed_date.replace(tzinfo=timezone.utc) + timedelta(seconds=1)
             else:
-                start_date = end_date - timedelta(days=1)  # Default to 1 day ago if no data
+                start_date = end_date - timedelta(days=1)
             
-            # Ensure we're not processing future data
             if start_date > end_date:
                 start_date = end_date - timedelta(days=1)
 
         logging.info(f"Processing data from {start_date} to {end_date}")
 
         for username in chat_usernames:
+            # Log heartbeat if it's time
+            if time.time() - last_heartbeat >= heartbeat_interval:
+                logging.info(f"ETL Heartbeat: Still running at {datetime.now(timezone.utc)}")
+                last_heartbeat = time.time()
+
+            # Check for inactivity
+            if time.time() - last_activity > inactivity_timeout:
+                logging.warning("ETL process seems to be inactive. Possible sleep detected.")
+
             chat_config = chat_configs.get(username)
             if not chat_config:
                 logging.warning(f"No chat config found for {username}. Skipping.")
@@ -113,6 +125,7 @@ async def main(mode, start_date=None, end_date=None):
 
             await data_processor.process_chat(username, start_date, end_date, chat_config)
             logging.info(f"Finished processing chat {username}")
+            last_activity = time.time()
 
             # Update processed dates
             if mode == 'recent':
@@ -132,6 +145,9 @@ async def main(mode, start_date=None, end_date=None):
     finally:
         await client.disconnect()
         logging.info("Telegram client disconnected")
+    
+    # Final heartbeat
+    logging.info(f"ETL Heartbeat: Finished running at {datetime.now(timezone.utc)}")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Telegram data collection script")
