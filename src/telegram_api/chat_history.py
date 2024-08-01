@@ -37,7 +37,6 @@ async def get_chat_history(client, chat, start_date, end_date, bq_client, datase
         users = {}
         
         async for message in client.iter_messages(chat, offset_date=end_date, reverse=False):
-            logging.debug(f"Processing message with date: {message.date}")
             if message.date < start_date:
                 logging.info(f"Reached message before start date. Stopping.")
                 break

@@ -100,11 +100,16 @@ async def main(mode, start_date=None, end_date=None):
             
             if last_processed_date:
                 start_date = last_processed_date.replace(tzinfo=timezone.utc) + timedelta(seconds=1)
+                logging.info(f"Last processed date found: {start_date}")
             else:
                 start_date = end_date - timedelta(days=1)
+                logging.info(f"No last processed date found. Starting from: {start_date}")
             
             if start_date > end_date:
                 start_date = end_date - timedelta(days=1)
+                logging.warning(f"Start date was in the future. Adjusted to: {start_date}")
+
+            logging.info(f"Processing recent data from {start_date} to {end_date}")
 
         logging.info(f"Processing data from {start_date} to {end_date}")
 
