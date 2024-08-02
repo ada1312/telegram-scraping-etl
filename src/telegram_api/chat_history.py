@@ -48,7 +48,7 @@ async def get_chat_history(client, chat, start_date, end_date, bq_client, datase
             reactions = await get_message_reactions(message)
             
             # Ensure date fields are properly converted to float
-            edit_date_timestamp = message.edit_date.timestamp() if message.edit_date else None
+            edit_date_timestamp = message.edit_date.timestamp() if message.edit_date else 0.0
             
             message_data = {
                 'id': message.id,
