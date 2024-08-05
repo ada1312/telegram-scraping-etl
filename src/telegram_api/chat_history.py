@@ -68,10 +68,7 @@ async def get_chat_history(client, chat, start_date, end_date, bq_client, datase
                 'post_author': message.post_author if message.post_author is not None else 0,
                 'edit_date': edit_date_timestamp,  # Should be a float
                 'via_bot': int(message.via_bot_id) if message.via_bot_id is not None else 0,
-                'reply_to': {
-                    'reply_to_msg_id': message.reply_to.reply_to_msg_id,
-                    'reply_to_peer_id': str(message.reply_to.reply_to_peer_id),
-                } if message.reply_to else None,
+                'reply_to_msg_id': message.reply_to.reply_to_msg_id if message.reply_to else None,
                 'reactions': reactions,  # Now a formatted string of emojis and counts
                 'fwd_from': None,  # Keeping as None as per original schema
                 'grouped_id': int(message.grouped_id) if message.grouped_id is not None else 0,

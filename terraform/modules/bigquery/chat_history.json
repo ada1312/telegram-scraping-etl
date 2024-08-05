@@ -102,24 +102,10 @@
     "description": "The unique identifier of the via bot"
   },
   {
-    "name": "reply_to",
-    "type": "RECORD",
+    "name": "reply_to_msg_id",
+    "type": "INTEGER",
     "mode": "NULLABLE",
-    "description": "The reply to the message",
-    "fields": [
-      {
-        "name": "reply_to_msg_id",
-        "type": "INTEGER",
-        "mode": "NULLABLE",
-        "description": "The ID of the message being replied to"
-      },
-      {
-        "name": "reply_to_peer_id",
-        "type": "STRING",
-        "mode": "NULLABLE",
-        "description": "The ID of the peer being replied to"
-      }
-    ]
+    "description": "The reply to the message"
   },
   {
     "name": "reactions",
