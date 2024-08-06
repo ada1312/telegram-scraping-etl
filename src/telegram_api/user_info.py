@@ -38,10 +38,8 @@ async def get_user_info(client, user_id):
             'verified': None,
             'restricted': None,
             'scam': None,
-            'fake': None,
             'access_hash': None,
             'bio': None,
-            'bot_info': None,
         }
         
         if user:
@@ -54,10 +52,8 @@ async def get_user_info(client, user_id):
                 'verified': bool(user.verified),
                 'restricted': bool(user.restricted),
                 'scam': bool(user.scam),
-                'fake': bool(user.fake),
                 'access_hash': str(user.access_hash) if hasattr(user, 'access_hash') else None,
                 'bio': user.about if hasattr(user, 'about') else None,
-                'bot_info': str(getattr(user, 'bot_info', '')) or None,
             })
         
         return user_info
@@ -70,10 +66,7 @@ async def get_user_info(client, user_id):
             'phone': 0,
             'bot': False,
             'verified': False,
-            'restricted': False,
             'scam': False,
-            'fake': False,
             'access_hash': 0,
             'bio': None,
-            'bot_info': None,
         }

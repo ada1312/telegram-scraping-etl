@@ -28,11 +28,5 @@
     "type": "INTEGER",
     "mode": "NULLABLE",
     "description": "The number of members in the chat"
-  },
-  {
-    "name": "linked_chat_id",
-    "type": "STRING",
-    "mode": "NULLABLE",
-    "description": "The unique identifier of the linked chat"
   }
 ]

@@ -42,22 +42,10 @@
     "description": "Whether the user is verified"
   },
   {
-    "name": "restricted",
-    "type": "BOOLEAN",
-    "mode": "NULLABLE",
-    "description": "Whether the user is restricted"
-  },
-  {
     "name": "scam",
     "type": "BOOLEAN",
     "mode": "NULLABLE",
     "description": "Whether the user is a scam"
-  },
-  {
-    "name": "fake",
-    "type": "BOOLEAN",
-    "mode": "NULLABLE",
-    "description": "Whether the user is fake"
   },
   {
     "name": "access_hash",
@@ -70,11 +58,5 @@
     "type": "STRING",
     "mode": "NULLABLE",
     "description": "The bio of the user"
-  },
-  {
-    "name": "bot_info",
-    "type": "STRING",
-    "mode": "NULLABLE",
-    "description": "The bot info of the user"
   }
 ]
