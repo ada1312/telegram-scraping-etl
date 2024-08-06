@@ -72,12 +72,6 @@
     "description": "The media of the message"
   },
   {
-    "name": "entities",
-    "type": "STRING",
-    "mode": "NULLABLE",
-    "description": "The entities of the message"
-  },
-  {
     "name": "mentioned",
     "type": "BOOLEAN",
     "mode": "NULLABLE",
@@ -112,12 +106,6 @@
     "type": "STRING",
     "mode": "NULLABLE",
     "description": "The reactions to the message"
-  },
-  {
-    "name": "fwd_from",
-    "type": "STRING",
-    "mode": "NULLABLE",
-    "description": "The forward from the message"
   },
   {
     "name": "grouped_id",
