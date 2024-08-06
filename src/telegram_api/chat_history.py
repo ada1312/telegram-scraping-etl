@@ -27,6 +27,15 @@ async def get_message_reactions(message):
         reaction_str = ", ".join(reactions)
     return reaction_str
 
+def standardize_chat_id(chat_id):
+    """
+    Standardize the chat ID by removing the -100 prefix if present.
+    """
+    chat_id_str = str(chat_id)
+    if chat_id_str.startswith('-100'):
+        return int(chat_id_str[4:])
+    return int(chat_id)
+
 async def get_chat_history(client, chat, start_date, end_date, bq_client, dataset_id, table_chat_history):
     """
     Retrieves the chat history from a given chat within a specified date range.
@@ -56,7 +65,7 @@ async def get_chat_history(client, chat, start_date, end_date, bq_client, datase
                 'from_user': str(message.from_id.user_id) if hasattr(message.from_id, 'user_id') else None,
                 'text': message.text,
                 'sender': str(message.sender_id) if message.sender_id else None,
-                'chat_id': str(message.chat_id),
+                'chat_id': str(standardize_chat_id(message.chat_id)),
                 'is_reply': bool(message.reply_to_msg_id),
                 'views': message.views if message.views is not None else 0,
                 'forwards': message.forwards if message.forwards is not None else 0,
