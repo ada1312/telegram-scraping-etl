@@ -11,3 +11,4 @@ textblob
 collections
 wordcloud
 sklearn
+nltk
