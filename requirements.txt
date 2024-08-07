@@ -3,3 +3,11 @@ requests
 telethon
 asyncio
 google-cloud-bigquery
+pandas
+numpy
+matplotlib
+seaborn
+textblob
+collections
+wordcloud
+sklearn
