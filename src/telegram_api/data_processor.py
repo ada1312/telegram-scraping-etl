@@ -2,11 +2,23 @@ import logging
 from telegram_api.chat_info import get_chat_info
 from telegram_api.chat_history import get_chat_history
 from bigquery_loader import upload_to_bigquery
-from datetime import datetime, time, timezone, timedelta
-from telegram_api.chat_config import get_chat_configs
+
 
 class DataProcessor:
     def __init__(self, client, bq_client, dataset_id, table_chat_config, table_chat_history, table_chat_info, table_user_info, is_backloading=False):
+        """
+        Initializes the DataProcessor class.
+
+        Parameters:
+        - client: The Telegram client.
+        - bq_client: The BigQuery client.
+        - dataset_id: The ID of the BigQuery dataset.
+        - table_chat_config: The name of the BigQuery table for chat configuration.
+        - table_chat_history: The name of the BigQuery table for chat history.
+        - table_chat_info: The name of the BigQuery table for chat information.
+        - table_user_info: The name of the BigQuery table for user information.
+        - is_backloading: A boolean indicating if the data processing is for backloading.
+        """
         self.client = client
         self.bq_client = bq_client
         self.dataset_id = dataset_id
@@ -21,10 +33,16 @@ class DataProcessor:
         self.is_backloading = is_backloading
 
     async def initialize(self):
+        """
+        Initializes the data processor by fetching existing users and chats from BigQuery.
+        """
         await self._get_existing_users()
         await self._get_existing_chats()
 
     async def _get_existing_users(self):
+        """
+        Fetches existing users from BigQuery and stores them in the `existing_users` set.
+        """
         try:
             query = f"SELECT CAST(id AS STRING) AS id FROM `{self.dataset_id}.{self.table_user_info}`"
             query_job = self.bq_client.query(query)
@@ -35,6 +53,9 @@ class DataProcessor:
             logging.error(f"Error fetching existing users: {e}", exc_info=True)
 
     async def _get_existing_chats(self):
+        """
+        Fetches existing chats from BigQuery and stores them in the `existing_chats` set.
+        """
         try:
             query = f"SELECT CAST(id AS STRING) AS id FROM `{self.dataset_id}.{self.table_chat_info}`"
             query_job = self.bq_client.query(query)
@@ -45,6 +66,17 @@ class DataProcessor:
             logging.error(f"Error fetching existing chats: {e}", exc_info=True)
 
     async def process_chat(self, username, start_date, end_date, chat_config):
+        """
+        Processes a chat by fetching its history, uploading messages to BigQuery, and updating chat info if needed.
+
+        Parameters:
+        - username: The username of the chat.
+        - start_date: The start date for fetching chat history.
+        - end_date: The end date for fetching chat history.
+        - chat_config: The configuration for the chat.
+
+        Note: This function is asynchronous and should be awaited.
+        """
         try:
             chat = await self.client.get_entity(username)
             chat_id = str(chat.id)
@@ -83,6 +115,11 @@ class DataProcessor:
             logging.error(f"Error processing chat {username}: {e}", exc_info=True)
 
     async def upload_new_data(self):
+        """
+        Uploads new chats and users to BigQuery.
+
+        Note: This function is asynchronous and should be awaited.
+        """
         try:
             if self.new_chats:
                 logging.info(f"Uploading {len(self.new_chats)} new chats to BigQuery")

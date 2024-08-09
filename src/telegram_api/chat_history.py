@@ -1,5 +1,4 @@
 import logging
-from datetime import datetime
 from telegram_api.user_info import get_user_info
 from google.cloud import bigquery
 
