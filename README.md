@@ -20,14 +20,14 @@ This project is an ETL (Extract, Transform, Load) pipeline for Telegram chat his
 1. Clone this repository:
 
 ```bash
-git clone https://github.com/ada1312/telegram-chat-history-etl.git
-cd telegram-chat-history-etl
+    git clone https://github.com/ada1312/telegram-chat-history-etl.git
+    cd telegram-chat-history-etl
 ```
 
 2. Install the required packages:
 
 ```bash
-pip install -r requirements.txt
+    pip install -r requirements.txt
 ```
 
 3. Set up your environment variables in a .env file:
@@ -98,29 +98,29 @@ The script expects the following tables in your BigQuery dataset:
 
 1. chat_config:
 ```bash
-bq mk --table your_dataset_id.chat_config \
-id:STRING,username:STRING,dates_to_load:DATE
+    bq mk --table your_dataset_id.chat_config \
+    id:STRING,username:STRING,dates_to_load:DATE
 ```
 
 2. chat_history:
 ```bash
-bq mk --table your_dataset_id.chat_history \
-id:INTEGER,date:FLOAT,from_user:INTEGER,text:STRING,sender:INTEGER,chat_id:INTEGER,is_reply:BOOLEAN,views:INTEGER,forwards:INTEGER,replies:STRING,buttons:STRING,media:STRING,entities:STRING,mentioned:BOOLEAN,post_author:STRING,edit_date:TIMESTAMP,via_bot:STRING,reply_to:RECORD,reactions:STRING,fwd_from:STRING,grouped_id:STRING,action:STRING,reply_to.reply_to_msg_id:INTEGER,reply_to.reply_to_peer_id:STRING
+    bq mk --table your_dataset_id.chat_history \
+    id:INTEGER,date:FLOAT,from_user:INTEGER,text:STRING,sender:INTEGER,chat_id:INTEGER,is_reply:BOOLEAN,views:INTEGER,forwards:INTEGER,replies:STRING,buttons:STRING,media:STRING,entities:STRING,mentioned:BOOLEAN,post_author:STRING,edit_date:TIMESTAMP,via_bot:STRING,reply_to:RECORD,reactions:STRING,fwd_from:STRING,grouped_id:STRING,action:STRING,reply_to.reply_to_msg_id:INTEGER,reply_to.reply_to_peer_id:STRING
 
 ```
 
 
 3. chat_info
 ```bash
-bq mk --table your_dataset_id.chat_info \
-id:INTEGER,name:STRING,username:STRING,description:STRING,members_count:STRING,linked_chat_id:STRING
+    bq mk --table your_dataset_id.chat_info \
+    id:INTEGER,name:STRING,username:STRING,description:STRING,members_count:STRING,linked_chat_id:STRING
 
 ```
 
 4. user_info
 ```bash
-bq mk --table your_dataset_id.user_info \
-id:INTEGER,first_name:STRING,last_name:STRING,username:STRING,phone:INTEGER,bot:BOOLEAN,verified:BOOLEAN,restricted:BOOLEAN,scam:BOOLEAN,fake:BOOLEAN,access_hash:INTEGER,bio:STRING,bot_info:STRING
+    bq mk --table your_dataset_id.user_info \
+    id:INTEGER,first_name:STRING,last_name:STRING,username:STRING,phone:INTEGER,bot:BOOLEAN,verified:BOOLEAN,restricted:BOOLEAN,scam:BOOLEAN,fake:BOOLEAN,access_hash:INTEGER,bio:STRING,bot_info:STRING
 ```
 
 ## Project Structure
@@ -169,6 +169,7 @@ This script is designed to be run as a scheduled job in Google Cloud Run. Follow
    docker build -t gcr.io/container-testing-381309/telegram_update_etl:latest .
    ```
     Push the image to Google Container Registry:
+
 ```bash
    docker push gcr.io/container-testing-381309/telegram_update_etl:latest
    ```
