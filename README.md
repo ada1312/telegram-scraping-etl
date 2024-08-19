@@ -192,13 +192,14 @@ phone_number = 'your_phone_number'
 with TelegramClient(StringSession(), api_id, api_hash) as client:
     client.start(phone=phone_number)
     print(client.session.save())
-    ```
+```
 Save the output string securely.
 
 3. **Apply Terraform Configuration Initialize Terraform**
+
 ```bash
 terraform init
-   ```
+```
 Plan your changes:
 ```bash
 terraform plan -var="telegram_session_string=your_session_string_here"
