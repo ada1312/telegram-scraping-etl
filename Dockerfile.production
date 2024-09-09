@@ -1,13 +1,6 @@
 # For more information, please refer to https://aka.ms/vscode-docker-python
 FROM python:3.11-slim
 
-ENV LOOGING_LEVEL=INFO
-ENV ACCESS_KEY_DEBANK=
-ENV URL=https://pro-openapi.debank.com/v1
-ENV TOKEN=
-ENV MAX_ACCOUNTS=10
-ENV TOP_ACCOUNT=5
-
 # Set the working directory inside the container
 WORKDIR /src
 

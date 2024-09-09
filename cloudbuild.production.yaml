@@ -1,11 +1,11 @@
 steps:
   # Step to build the Docker image
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'gcr.io/container-testing-381309/telegram_update_bot:lastest .', '.']
+    args: ['build', '-t', 'gcr.io/container-testing-381309/telegram_update_etl:latest', '-f', 'Dockerfile.test', '.']
 
   # Step to push the image to Google Container Registry
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', 'gcr.io/container-testing-381309/telegram_update_bot:lastest .']
+    args: ['push', 'gcr.io/container-testing-381309/telegram_update_etl:latest']
 
 images:
-  - 'gcr.io/container-testing-381309/telegram_update_bot:lastest .'
+  - 'gcr.io/container-testing-381309/telegram_update_etl:latest'

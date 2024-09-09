@@ -8,7 +8,6 @@ numpy
 matplotlib
 seaborn
 textblob
-collections
 wordcloud
-sklearn
+scikit-learn
 nltk
