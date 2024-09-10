@@ -70,7 +70,7 @@ module "cloud_run" {
   api_id_secret                 = module.secret_manager.secret_ids["api_id"]
   api_hash_secret               = module.secret_manager.secret_ids["api_hash"]
   phone_number_secret           = module.secret_manager.secret_ids["phone_number"]
-  chat_usernames                = "pythontelegrambotgroup,binanceexchange,lobsters_chat"
+  chat_usernames                = "cryptogem,blokiments_public,lobsters_chat,bitcoin_industry"
   sample_size                   = 1000
   logging_level                 = "INFO"
   dataset_id                    = module.bigquery.dataset_id
